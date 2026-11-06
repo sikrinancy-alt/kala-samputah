@@ -34,7 +34,7 @@ export default function FloatingWhatsApp() {
   return (
     <aside 
       aria-label="WhatsApp Contact"
-      className="fixed bottom-6 right-6 z-40 flex items-center gap-3 select-none"
+      className="fixed bottom-6 right-6 z-40 flex flex-col items-end gap-3 select-none"
     >
       {/* Optional Speech Bubble Tooltip */}
       {showTooltip && (
