@@ -1,0 +1,543 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
+import { FaArrowRight, FaSearchPlus, FaTimes, FaPalette } from "react-icons/fa";
+import { useArtModal } from "../../components/ArtModalContext";
+import { getCachedArtworks } from "../../lib/artworksCache";
+import { primarySrc } from "../../lib/artworkViews";
+
+const edits = [
+  {
+    slug: "earth-and-ash",
+    title: "Earth & Ash",
+    subtitle: "Works that breathe in browns, ochres, and warm silence",
+    count: 4,
+    mood: "Grounded · Warm · Still",
+    colors: ["Amber", "Yellow", "Blue"],
+  },
+  {
+    slug: "raw-and-unfinished",
+    title: "Raw & Unfinished",
+    subtitle: "Paintings that stopped exactly where they needed to",
+    count: 3,
+    mood: "Visceral · Honest · Incomplete",
+    colors: ["Rose", "Crimson"],
+  },
+  {
+    slug: "between-light",
+    title: "Between Light",
+    subtitle: "Compositions caught in the moment before clarity arrives",
+    count: 3,
+    mood: "Ethereal · Quiet · Contemplative",
+    colors: ["Teal", "Blue", "Lavender"],
+  },
+  {
+    slug: "dark-interiors",
+    title: "Dark Interiors",
+    subtitle: "Works made at night, when everything honest comes out",
+    count: 3,
+    mood: "Introspective · Heavy · True",
+    colors: ["Crimson", "Amber", "Emerald"],
+  },
+];
+
+
+const filterPalette = [
+  { name: "All",      bg: "#1C1C1C", text: "#FFFFFF", border: "#1C1C1C" },
+  { name: "Rose",     bg: "#C95777", text: "#FFFFFF", border: "#B54565" },
+  { name: "Crimson",  bg: "#C42D2D", text: "#FFFFFF", border: "#AA2020" },
+  { name: "Amber",    bg: "#D97724", text: "#FFFFFF", border: "#BC6014" },
+  { name: "Yellow",   bg: "#E5BA1E", text: "#1C1C1C", border: "#C89E0E" },
+  { name: "Teal",     bg: "#2A8A84", text: "#FFFFFF", border: "#1D706B" },
+  { name: "Blue",     bg: "#2578B0", text: "#FFFFFF", border: "#196090" },
+  { name: "Lavender", bg: "#8A6DB3", text: "#FFFFFF", border: "#73569C" },
+  { name: "Emerald",  bg: "#358A46", text: "#FFFFFF", border: "#257034" },
+];
+
+export default function EditsPage() {
+  const [hovered, setHovered]           = useState(null);
+  const [selectedColor, setSelectedColor] = useState("All");
+  const [apiWorks, setApiWorks]         = useState([]);
+  const { openArtwork, openInquiry } = useArtModal();
+
+  useEffect(() => {
+    getCachedArtworks().then((artworks) => {
+      if (artworks && artworks.length > 0) {
+        setApiWorks(artworks.map((a) => ({
+          id:       a._id,
+          _id:      a._id,
+          src:      primarySrc(a),
+          title:    a.title,
+          artist:   a.artist   || "Nancy Sikri",
+          medium:   a.medium   || "",
+          size:     a.dimensions || a.size || "",
+          year:     a.year     || new Date().getFullYear(),
+          color:    a.color    || "",
+          category: a.category?.name || a.category || "",
+          featured: a.featured,
+        })));
+      }
+    }).catch(() => {});
+  }, []);
+
+  const filteredEdits = selectedColor === "All"
+    ? edits
+    : edits.filter(e => e.colors.includes(selectedColor));
+
+  const matchingColorWorks = selectedColor === "All"
+    ? []
+    : apiWorks.filter(w => w.color === selectedColor);
+
+  return (
+    <div className="min-h-screen" style={{ background: "#FDFAF5" }}>
+      <Navbar />
+
+      {/* ── Mobile Hero ── */}
+      <section
+        className="md:hidden relative w-full overflow-hidden"
+        style={{ minHeight: "340px", height: "42vh" }}
+      >
+        <Image
+          src={apiWorks[0]?.src || ""}
+          alt="The Edits"
+          fill
+          priority
+          className="object-cover object-center"
+        />
+        <div
+          className="absolute inset-0"
+          style={{ background: "rgba(10, 8, 6, 0.55)" }}
+        />
+        <div className="absolute bottom-8 left-6 z-10">
+          <p
+            style={{
+              fontFamily: '"SF Pro Display", "SF Pro", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif',
+              fontSize: "0.6rem",
+              letterSpacing: "0.3em",
+              textTransform: "uppercase",
+              color: "#C9A96E",
+              marginBottom: "0.4rem",
+            }}
+          >
+            Curated Series
+          </p>
+          <h1
+            style={{
+              fontFamily: 'BeausiteFit, "SF Pro Display", sans-serif',
+              fontWeight: 400,
+              fontSize: "clamp(1.8rem, 6vw, 2.8rem)",
+              color: "#F5F0E8",
+              letterSpacing: "0.02em",
+              lineHeight: 1.1,
+            }}
+          >
+            The Edits
+          </h1>
+        </div>
+      </section>
+
+      {/* ── Desktop Hero — expanding panels ── */}
+      <section
+        className="hidden md:flex w-full overflow-hidden"
+        style={{ height: "88vh", minHeight: "500px", cursor: "pointer" }}
+        onMouseLeave={() => setHovered(null)}
+      >
+        {edits.map((edit, i) => {
+          const isActive    = hovered === edit.slug;
+          const noneHovered = hovered === null;
+          const coverSrc    = apiWorks[i % Math.max(apiWorks.length, 1)]?.src || null;
+
+          return (
+            <div
+              key={edit.slug}
+              className="relative overflow-hidden flex-shrink-0"
+              style={{
+                width: isActive
+                  ? "42%"
+                  : noneHovered
+                  ? "25%"
+                  : "19.3%",
+                transition: "width 0.65s cubic-bezier(0.77,0,0.175,1)",
+                borderRight: i < edits.length - 1
+                  ? "1px solid rgba(255,255,255,0.07)"
+                  : "none",
+              }}
+              onMouseEnter={() => setHovered(edit.slug)}
+              onClick={() => openArtwork({
+                title:  edit.title,
+                src:    coverSrc,
+                artist: "Nancy Sikri",
+                medium: `Curated Series · ${edit.count} Works`,
+                size:   "Original Studio Series",
+                year:   new Date().getFullYear(),
+              })}
+            >
+              {/* Image */}
+              <Image
+                src={coverSrc || ""}
+                alt={edit.title}
+                fill
+                className="object-cover"
+                style={{
+                  transform: isActive ? "scale(1.05)" : "scale(1.12)",
+                  transition: "transform 0.8s ease",
+                }}
+                priority={i === 0}
+              />
+
+              {/* Overlay */}
+              <div
+                className="absolute inset-0"
+                style={{
+                  background: isActive
+                    ? "linear-gradient(to top, rgba(10,8,6,0.78) 0%, rgba(10,8,6,0.1) 60%, transparent 100%)"
+                    : "rgba(10,8,6,0.55)",
+                  transition: "background 0.5s ease",
+                }}
+              />
+
+              {/* Panel number */}
+              <div
+                className="absolute top-6 left-5"
+                style={{
+                  fontFamily: '"SF Pro Display", "SF Pro", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif',
+                  fontWeight: 300,
+                  fontSize: "0.55rem",
+                  letterSpacing: "0.3em",
+                  color: "rgba(201,169,110,0.5)",
+                  writingMode: "vertical-rl",
+                  textTransform: "uppercase",
+                  opacity: isActive ? 0 : 1,
+                  transition: "opacity 0.3s ease",
+                }}
+              >
+                0{i + 1}
+              </div>
+
+              {/* Bottom content */}
+              <div
+                className="absolute bottom-0 left-0 right-0 px-5 pb-8"
+                style={{
+                  opacity: isActive ? 1 : 0.7,
+                  transition: "opacity 0.4s ease",
+                }}
+              >
+                <p
+                  style={{
+                    fontFamily: '"SF Pro Display", "SF Pro", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif',
+                    fontStyle: "italic",
+                    fontSize: "0.78rem",
+                    color: "rgba(201,169,110,0.7)",
+                    marginBottom: "0.5rem",
+                    opacity: isActive ? 1 : 0,
+                    transform: isActive ? "translateY(0)" : "translateY(6px)",
+                    transition: "opacity 0.35s ease 0.1s, transform 0.35s ease 0.1s",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  {edit.mood}
+                </p>
+
+                <h2
+                  style={{
+                    fontFamily: 'BeausiteFit, "SF Pro Display", sans-serif',
+                    fontWeight: 400,
+                    fontSize: isActive ? "clamp(1.4rem, 2.5vw, 2.2rem)" : "0.9rem",
+                    color: "#F5F0E8",
+                    lineHeight: 1.15,
+                    letterSpacing: "0.01em",
+                    writingMode: isActive ? "horizontal-tb" : "vertical-rl",
+                    transform: isActive ? "none" : "rotate(180deg)",
+                    transition: "font-size 0.4s ease, writing-mode 0s 0.2s",
+                    whiteSpace: isActive ? "normal" : "nowrap",
+                  }}
+                >
+                  {edit.title}
+                </h2>
+
+                <p
+                  style={{
+                    fontFamily: '"SF Pro Display", "SF Pro", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif',
+                    fontStyle: "italic",
+                    fontSize: "0.82rem",
+                    color: "rgba(245,240,232,0.45)",
+                    marginTop: "0.5rem",
+                    lineHeight: 1.5,
+                    opacity: isActive ? 1 : 0,
+                    transform: isActive ? "translateY(0)" : "translateY(8px)",
+                    transition: "opacity 0.4s ease 0.15s, transform 0.4s ease 0.15s",
+                  }}
+                >
+                  {edit.subtitle}
+                </p>
+
+                {isActive && (
+                  <div className="mt-3 flex items-center gap-2">
+                    <span className="px-2.5 py-1 bg-white/20 text-white rounded text-[0.62rem] tracking-wider uppercase font-sans flex items-center gap-1 backdrop-blur-sm">
+                      <FaSearchPlus className="text-brand-accent text-[9px]" />
+                      Tap to Zoom Canvas
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </section>
+
+      {/* ── Interactive Color Palette Filter Bar ── */}
+      <div className="border-b border-[#E8E1D5] bg-transparent py-4 px-6 md:px-10">
+        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-brand-dark font-sans font-semibold">
+            <svg className="w-3.5 h-3.5 text-brand-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="13.5" cy="6.5" r=".7" fill="currentColor"/>
+              <circle cx="17.5" cy="10.5" r=".7" fill="currentColor"/>
+              <circle cx="8.5" cy="7.5" r=".7" fill="currentColor"/>
+              <circle cx="6.5" cy="12.5" r=".7" fill="currentColor"/>
+              <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.563-2.512 5.563-5.563C22 6.5 17.5 2 12 2z"/>
+            </svg>
+            <span>Filter Series by Palette:</span>
+          </div>
+
+          {/* Palette Swatch Filter Buttons */}
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 max-w-full">
+            {filterPalette.map((p) => {
+              const active = selectedColor === p.name;
+              return (
+                <button
+                  key={p.name}
+                  onClick={() => setSelectedColor(p.name)}
+                  style={{
+                    backgroundColor: p.bg,
+                    color: p.text,
+                    border: `1px solid ${p.border}`,
+                    boxShadow: active
+                      ? "0 0 0 2px #FDFAF5, 0 0 0 4px #1C1C1C, 0 4px 10px rgba(0,0,0,0.2)"
+                      : "0 1px 3px rgba(0,0,0,0.12)",
+                    transform: active ? "scale(1.06)" : "scale(1)",
+                  }}
+                  className="px-3.5 py-1.5 rounded-full text-xs font-sans tracking-wide transition-all flex items-center gap-1.5 flex-shrink-0 cursor-pointer font-medium hover:opacity-95"
+                >
+                  {active && (
+                    <span className="text-[10px] font-bold">✓</span>
+                  )}
+                  <span>{p.name}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {selectedColor !== "All" && (
+            <button
+              onClick={() => setSelectedColor("All")}
+              className="text-[0.68rem] tracking-wider uppercase font-sans text-brand-warm hover:text-brand-dark flex items-center gap-1 underline"
+            >
+              <FaTimes className="text-[9px]" />
+              Reset
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* ── Edits grid ── */}
+      <section className="py-12 md:py-20 px-5 md:px-10">
+        <div className="max-w-7xl mx-auto space-y-12">
+          
+          {/* Main Series Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+            {filteredEdits.map((edit, index) => {
+              const works      = apiWorks.slice(0, 3);
+              const coverSrc   = apiWorks[index % Math.max(apiWorks.length, 1)]?.src || null;
+              const isHov = hovered === edit.slug;
+
+              const editCoverWork = {
+                title:  edit.title,
+                src:    coverSrc,
+                artist: "Nancy Sikri",
+                medium: `Curated Series · ${edit.count} Works`,
+                size:   "Original Studio Series",
+                year:   new Date().getFullYear(),
+              };
+
+              return (
+                <div
+                  key={edit.slug}
+                  className="group relative overflow-hidden rounded-lg bg-[#F5F0E8] border border-[#EAE2D5] transition-all duration-300 hover:shadow-xl"
+                  onMouseEnter={() => setHovered(edit.slug)}
+                  onMouseLeave={() => setHovered(null)}
+                >
+                  {/* Cover image (Click to Zoom) */}
+                  <div 
+                    onClick={() => openArtwork(editCoverWork)}
+                    className="relative w-full overflow-hidden cursor-pointer" 
+                    style={{ aspectRatio: "16/9" }}
+                  >
+                    <Image src={coverSrc || ""} alt={edit.title} fill className="object-cover img-zoom" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent pointer-events-none" />
+
+                    {/* Mood pill */}
+                    <div className="absolute top-4 left-4 font-display italic text-[0.78rem] text-[#F5F0E8] bg-black/45 backdrop-blur-md px-3 py-1 rounded">
+                      {edit.mood}
+                    </div>
+
+                    {/* Hover Lens hint */}
+                    <div className="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/95 text-brand-dark text-xs tracking-wider uppercase font-sans font-medium shadow">
+                        <FaSearchPlus className="text-brand-accent text-xs" />
+                        Inspect Series Cover
+                      </span>
+                    </div>
+
+                    {/* Mini preview strip of paintings (Each clickable to Zoom!) */}
+                    <div className="absolute bottom-4 right-4 flex items-center gap-2 z-10">
+                      <span className="text-[0.6rem] tracking-wider uppercase text-white/80 font-sans hidden sm:inline-block">
+                        Series Works:
+                      </span>
+                      {works.map(w => (
+                        <div 
+                          key={w.id} 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openArtwork(w);
+                          }}
+                          title={`Click to inspect: ${w.title}`}
+                          className="relative w-9 h-9 sm:w-10 sm:h-10 rounded overflow-hidden border-2 border-white/70 shadow hover:border-brand-accent transition-all cursor-pointer hover:scale-110"
+                        >
+                          <Image src={w.src} alt={w.title} fill className="object-cover" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Text and Actions block */}
+                  <div className="p-6">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <h2 className="font-display font-medium text-2xl text-brand-dark mb-1">
+                          {edit.title}
+                        </h2>
+                        <p className="font-display italic text-sm text-[#6B5F55] leading-relaxed">
+                          {edit.subtitle}
+                        </p>
+                      </div>
+
+                      {/* Arrow / Inspect button */}
+                      <button
+                        onClick={() => openArtwork(editCoverWork)}
+                        className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center border border-brand-sand bg-white text-brand-dark hover:bg-brand-dark hover:text-white transition-all shadow-sm"
+                        title="View with Lens Zoom"
+                        aria-label="Inspect Series"
+                      >
+                        <FaSearchPlus className="text-sm text-brand-accent" />
+                      </button>
+                    </div>
+
+                    {/* Buttons: Inquire & Inspect */}
+                    <div className="mt-5 pt-4 border-t border-[#E8E0D2] flex flex-wrap items-center justify-between gap-3">
+                      <span className="text-[0.62rem] tracking-widest uppercase font-sans text-brand-warm font-semibold">
+                        {edit.count} Original Works in Series
+                      </span>
+
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => openInquiry(editCoverWork)}
+                          className="px-4 py-2 bg-brand-dark hover:bg-brand-warm text-brand-cream text-xs tracking-wider uppercase font-sans font-medium rounded transition-colors"
+                        >
+                          Inquire for Quote
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => openArtwork(editCoverWork)}
+                          className="px-3.5 py-2 border border-brand-sand bg-white hover:bg-neutral-50 text-brand-dark text-xs tracking-wider uppercase font-sans rounded transition-colors"
+                        >
+                          Inspect Canvas
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* If a specific color is selected, show its individual artworks too */}
+          {selectedColor !== "All" && matchingColorWorks.length > 0 && (
+            <div className="pt-8 border-t border-[#E8E1D5]">
+              <div className="mb-6 flex items-center justify-between">
+                <div>
+                  <span className="text-[0.65rem] tracking-widest uppercase text-brand-accent font-sans font-medium">
+                    Individual Works
+                  </span>
+                  <h3 className="font-display text-2xl text-brand-dark">
+                    All {selectedColor} Palette Paintings
+                  </h3>
+                </div>
+                <Link
+                  href={`/collect?color=${selectedColor}`}
+                  className="text-xs uppercase tracking-wider text-brand-warm hover:text-brand-dark border-b border-brand-warm pb-0.5 font-sans"
+                >
+                  View in Collection →
+                </Link>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                {matchingColorWorks.map((work) => (
+                  <div
+                    key={work.id}
+                    onClick={() => openArtwork(work)}
+                    className="group bg-white rounded-lg p-3 border border-[#EAE2D5] cursor-pointer hover:shadow-lg transition-all"
+                  >
+                    <div className="relative aspect-[3/4] w-full rounded overflow-hidden mb-3 bg-neutral-100">
+                      <Image src={work.src} alt={work.title} fill className="object-cover group-hover:scale-105 transition-transform" />
+                    </div>
+                    <h4 className="font-display text-base text-brand-dark truncate">{work.title}</h4>
+                    <p className="text-xs text-brand-muted font-sans mb-3">{work.medium} · {work.size}</p>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          openInquiry(work);
+                        }}
+                        className="w-full py-1.5 text-center text-[0.65rem] tracking-wider uppercase font-sans font-medium bg-brand-dark text-white rounded hover:bg-brand-warm transition-colors"
+                      >
+                        Inquire for Quote
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+        </div>
+      </section>
+
+      {/* ── Bottom note ── */}
+      <section className="py-12 md:py-16 px-6 md:px-10 border-t border-brand-sand/50" style={{ background: "#F5F0E8" }}>
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+          <p style={{
+            fontFamily: '"SF Pro Display", "SF Pro", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif',
+            fontStyle: "italic",
+            fontSize: "clamp(1.2rem, 2.5vw, 1.8rem)",
+            color: "#1C1C1C",
+          }}>
+            Browse everything in the full collection.
+          </p>
+          <Link href="/collect" className="btn-dark w-full md:w-auto inline-flex items-center justify-center gap-3 px-10 py-4 flex-shrink-0">
+            Collect
+            <FaArrowRight className="text-[10px]" />
+          </Link>
+        </div>
+      </section>
+
+      <Footer />
+    </div>
+  );
+}
