@@ -77,7 +77,7 @@ export function SiteContentProvider({ children }) {
 
   const fetchContent = useCallback(async () => {
     try {
-      const res = await fetch("/api/content");
+      const res = await fetch("/api/content", { cache: "no-store" });
       if (res.ok) {
         const data = await res.json();
         if (data.content) {
@@ -96,12 +96,11 @@ export function SiteContentProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    // On mount (client-only), first apply any sessionStorage cache
+    // Show cached content immediately, then revalidate it against the database.
     const cached = readCachedContent();
     if (cached) {
       setContent((prev) => mergeContent(prev, cached));
       setLoaded(true);
-      return; // already hydrated; skip network round-trip
     }
     fetchContent();
   }, [fetchContent]);

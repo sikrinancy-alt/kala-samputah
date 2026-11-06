@@ -53,7 +53,7 @@ export default function AdminContentPage() {
   const [newSlide, setNewSlide] = useState({ src: "", label: "" });
 
   useEffect(() => {
-    fetch("/api/content")
+    fetch("/api/content", { cache: "no-store" })
       .then(res => res.json())
       .then(data => {
         if (data.content) {
@@ -77,7 +77,7 @@ export default function AdminContentPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Save failed");
-      refreshContent(); // update this tab's cached site content so the live preview reflects the save
+      await refreshContent(); // update this tab's cached site content so the live preview reflects the save
       toast.success("Content saved", `Your ${key} section updates are now live on the website.`);
     } catch (err) {
       toast.error("Could not save content", err.message || "Please try again in a moment.");
@@ -93,6 +93,26 @@ export default function AdminContentPage() {
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Upload failed");
     return data.url;
+  };
+
+  const saveHeroSlides = () => {
+    const label = newSlide.label.trim();
+    const src = newSlide.src.trim();
+
+    if (label || src) {
+      if (!label || !src) {
+        toast.error("Incomplete hero slide", "Add both a slide label and an image before saving.");
+        return;
+      }
+
+      const slides = [...heroSlides, { label, src }];
+      setHeroSlides(slides);
+      setNewSlide({ src: "", label: "" });
+      saveSection("hero", { slides });
+      return;
+    }
+
+    saveSection("hero", { slides: heroSlides });
   };
 
   return (
@@ -304,8 +324,13 @@ export default function AdminContentPage() {
                     <button
                       type="button"
                       onClick={() => {
-                        if (!newSlide.src || !newSlide.label) return;
-                        setHeroSlides([...heroSlides, newSlide]);
+                        const label = newSlide.label.trim();
+                        const src = newSlide.src.trim();
+                        if (!label || !src) {
+                          toast.error("Incomplete hero slide", "Add both a slide label and an image.");
+                          return;
+                        }
+                        setHeroSlides([...heroSlides, { label, src }]);
                         setNewSlide({ src: "", label: "" });
                       }}
                       style={{
@@ -325,7 +350,7 @@ export default function AdminContentPage() {
                 </div>
 
                 <button
-                  onClick={() => saveSection("hero", { slides: heroSlides })}
+                  onClick={saveHeroSlides}
                   disabled={saving}
                   style={{
                     background: "#C9A96E",

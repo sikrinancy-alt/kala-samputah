@@ -4,6 +4,9 @@ import { getAdminSession } from "../../../lib/auth";
 import SiteContent from "../../../models/SiteContent";
 import { heroSlides } from "../../../components/data";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 const DEFAULT_CONTENT = {
   hero: {
     slides: heroSlides,
@@ -48,24 +51,10 @@ export async function GET() {
       content[doc.key] = doc.value;
     });
 
-    return NextResponse.json(
-      { content },
-      {
-        headers: {
-          "Cache-Control": "public, s-maxage=120, stale-while-revalidate=600",
-        },
-      }
-    );
+    return NextResponse.json({ content });
   } catch {
     // If DB unavailable, return defaults safely
-    return NextResponse.json(
-      { content: DEFAULT_CONTENT },
-      {
-        headers: {
-          "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60",
-        },
-      }
-    );
+    return NextResponse.json({ content: DEFAULT_CONTENT });
   }
 }
 
