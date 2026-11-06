@@ -34,7 +34,13 @@ try {
   await admin.save();
   console.log(`Admin account seeded for ${email}.`);
 } catch (error) {
-  console.error("Admin seed failed. Check the MongoDB URI, database credentials, and network access.");
+  const authenticationFailed =
+    error.code === 8000 || /bad auth|authentication failed/i.test(error.message || "");
+  console.error(
+    authenticationFailed
+      ? "Atlas rejected the database credentials. Update MONGODB_URI with the correct Atlas database username/password; URL-encode special characters."
+      : "Admin seed failed. Check the MongoDB URI and Atlas network access."
+  );
   console.error(error.message);
   process.exitCode = 1;
 } finally {
