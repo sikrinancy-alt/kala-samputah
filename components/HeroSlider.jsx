@@ -77,7 +77,13 @@ export default function HeroSlider() {
             className={`object-cover ${i === currentSlide ? "ken-burns" : ""}`}
             priority={i === 0}
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/40" />
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "radial-gradient(ellipse 75% 70% at 0% 100%, rgba(0,0,0,0.48) 0%, rgba(0,0,0,0.26) 42%, transparent 100%)",
+            }}
+          />
         </div>
       ))}
 

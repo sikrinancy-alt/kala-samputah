@@ -3,10 +3,12 @@
 import Image from "next/image";
 import { FaSearchPlus } from "react-icons/fa";
 import { useArtModal } from "./ArtModalContext";
+import { formatArtworkPrice } from "../lib/formatArtworkPrice";
 
 export default function ArtCard(props) {
-  const { src, artist, title, medium, size, year } = props;
+  const { src, artist, title, medium, size, year, price } = props;
   const { openArtwork, openInquiry } = useArtModal();
+  const formattedPrice = formatArtworkPrice(price);
 
   const handleCardClick = () => {
     openArtwork(props);
@@ -60,6 +62,9 @@ export default function ArtCard(props) {
           <p className="section-title text-[0.65rem]">
             {medium} {size ? `· ${size}` : ""}
           </p>
+          {formattedPrice && (
+            <p className="mt-1 text-sm font-semibold text-brand-dark">{formattedPrice}</p>
+          )}
         </div>
 
         {/* Action Button */}
@@ -70,7 +75,7 @@ export default function ArtCard(props) {
             className="mt-3 text-brand-accent hover:text-brand-dark transition-colors text-[0.68rem] tracking-widest uppercase border-b border-brand-accent/40 hover:border-brand-dark pb-0.5 font-medium"
             style={{ fontFamily: '"SF Pro Display", "SF Pro", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif' }}
           >
-            Inquire for Quote →
+            {formattedPrice ? "Ask About This Artwork →" : "Inquire for Quote →"}
           </button>
         </div>
       </div>

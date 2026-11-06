@@ -22,6 +22,7 @@ import { useArtModal } from "../../../components/ArtModalContext";
 import { useSiteContent } from "../../../components/SiteContentContext";
 import { getCachedArtworks } from "../../../lib/artworksCache";
 import { angleViews } from "../../../lib/artworkViews";
+import { formatArtworkPrice } from "../../../lib/formatArtworkPrice";
 import { FaArrowLeft, FaWhatsapp, FaShieldAlt, FaAward, FaTruck, FaArrowRight, FaHome } from "react-icons/fa";
 
 export default function ArtworkDetailPage() {
@@ -58,6 +59,7 @@ export default function ArtworkDetailPage() {
               artist: dbArt.artist || "Nancy Sikri",
               medium: dbArt.medium || "Mixed Media on Canvas",
               size: dbArt.dimensions || dbArt.size || "Original Size",
+              price: dbArt.price,
               year: dbArt.year || new Date().getFullYear(),
               color: dbArt.color || "Amber",
               category: dbArt.category?.name || dbArt.category || "Paintings",
@@ -88,6 +90,7 @@ export default function ArtworkDetailPage() {
           artist: a.artist || "Nancy Sikri",
           medium: a.medium || "Mixed Media on Canvas",
           size: a.dimensions || a.size || "",
+          price: a.price,
           year: a.year || new Date().getFullYear(),
           color: a.color || "Neutral",
           category: a.category?.name || a.category || "Paintings",
@@ -122,6 +125,7 @@ export default function ArtworkDetailPage() {
   if (!currentWork) {
     return notFound();
   }
+  const formattedPrice = formatArtworkPrice(currentWork.price);
 
   // Angle views for the multi-angle viewer (falls back to single primary image)
   const angleViewsForWork =
@@ -233,8 +237,18 @@ export default function ArtworkDetailPage() {
                 <h3 className="font-display text-xl text-brand-dark">
                   Acquire This Original Piece
                 </h3>
+                {formattedPrice && (
+                  <div className="mt-3">
+                    <span className="text-[0.62rem] uppercase tracking-widest text-brand-muted font-sans">
+                      Listed Price
+                    </span>
+                    <p className="font-display text-2xl text-brand-dark">{formattedPrice}</p>
+                  </div>
+                )}
                 <p className="text-xs text-brand-muted font-sans leading-relaxed mt-1">
-                  All works are sold without retail checkout carts or middleman markups. Inquire below for pricing, framing options, and secure crated delivery.
+                  {formattedPrice
+                    ? "Inquire below about availability, framing options, and secure crated delivery."
+                    : "All works are sold without retail checkout carts or middleman markups. Inquire below for pricing, framing options, and secure crated delivery."}
                 </p>
               </div>
 
@@ -251,7 +265,7 @@ export default function ArtworkDetailPage() {
                   onClick={() => openInquiry(currentWork)}
                   className="w-full py-3.5 px-6 bg-brand-dark hover:bg-brand-warm text-brand-cream rounded-lg text-xs tracking-widest uppercase font-sans font-medium transition-all shadow hover:shadow-md flex items-center justify-center gap-2"
                 >
-                  <span>Inquire for Quote</span>
+                  <span>{formattedPrice ? "Ask About This Artwork" : "Inquire for Quote"}</span>
                   <FaArrowRight className="text-[10px] text-brand-accent" />
                 </button>
 

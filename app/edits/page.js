@@ -9,6 +9,7 @@ import { FaArrowRight, FaSearchPlus, FaTimes, FaPalette } from "react-icons/fa";
 import { useArtModal } from "../../components/ArtModalContext";
 import { getCachedArtworks } from "../../lib/artworksCache";
 import { primarySrc } from "../../lib/artworkViews";
+import { formatArtworkPrice } from "../../lib/formatArtworkPrice";
 
 const edits = [
   {
@@ -75,6 +76,7 @@ export default function EditsPage() {
           artist:   a.artist   || "Nancy Sikri",
           medium:   a.medium   || "",
           size:     a.dimensions || a.size || "",
+          price:    a.price,
           year:     a.year     || new Date().getFullYear(),
           color:    a.color    || "",
           category: a.category?.name || a.category || "",
@@ -499,6 +501,11 @@ export default function EditsPage() {
                     </div>
                     <h4 className="font-display text-base text-brand-dark truncate">{work.title}</h4>
                     <p className="text-xs text-brand-muted font-sans mb-3">{work.medium} · {work.size}</p>
+                    {formatArtworkPrice(work.price) && (
+                      <p className="text-sm text-brand-dark font-sans font-semibold mb-3">
+                        {formatArtworkPrice(work.price)}
+                      </p>
+                    )}
                     <div className="flex items-center gap-2">
                       <button
                         onClick={(e) => {

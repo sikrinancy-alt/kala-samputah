@@ -8,7 +8,7 @@ import { useToast } from "../../../components/ToastProvider";
 
 const EMPTY = {
   title: "", artist: "Nancy Sikri", medium: "", category: "Paintings",
-  year: new Date().getFullYear(), size: "", color: "", desc: "", src: "", featured: false,
+  year: new Date().getFullYear(), size: "", price: "", color: "", desc: "", src: "", featured: false,
   images: [],
 };
 
@@ -24,12 +24,14 @@ const Label = ({ children }) => (
   </span>
 );
 
-const Input = ({ value, onChange, type = "text", placeholder = "" }) => (
+const Input = ({ value, onChange, type = "text", placeholder = "", min, step }) => (
   <input
     type={type}
     value={value}
     onChange={onChange}
     placeholder={placeholder}
+    min={min}
+    step={step}
     style={{
       width: "100%", background: "rgba(245,240,232,0.05)", border: "1px solid rgba(255,255,255,0.08)",
       color: "#F5F0E8", fontSize: "0.85rem", padding: "0.6rem 0.8rem", outline: "none",
@@ -67,7 +69,11 @@ const Textarea = ({ value, onChange, rows = 3 }) => (
 
 // ── Modal form ────────────────────────────────────────────────────────────────
 function ArtworkModal({ initial, onSave, onClose }) {
-  const [form, setForm] = useState(() => ({ images: [], ...(initial || EMPTY) }));
+  const [form, setForm] = useState(() => ({
+    images: [],
+    ...(initial || EMPTY),
+    price: initial?.price ?? "",
+  }));
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadingAngles, setUploadingAngles] = useState(false);
@@ -93,7 +99,11 @@ function ArtworkModal({ initial, onSave, onClose }) {
     try {
       const method = form._id ? "PUT" : "POST";
       const url    = form._id ? `/api/artworks/${form._id}` : "/api/artworks";
-      const payload = { ...form, images: angleList.filter(img => img?.src) };
+      const payload = {
+        ...form,
+        price: String(form.price).trim() === "" ? null : Number(form.price),
+        images: angleList.filter(img => img?.src),
+      };
       const res    = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
       const data   = await res.json();
       if (!res.ok) {
@@ -225,6 +235,20 @@ function ArtworkModal({ initial, onSave, onClose }) {
             <div><Label>Year</Label><Input value={form.year} onChange={set("year")} type="number" /></div>
             <div><Label>Size</Label><Input value={form.size} onChange={set("size")} placeholder="24 × 30 in" /></div>
             <div><Label>Color</Label><Select value={form.color} onChange={set("color")} options={["", ...COLORS]} /></div>
+          </div>
+          <div>
+            <Label>Price (₹) · Optional</Label>
+            <Input
+              value={form.price}
+              onChange={set("price")}
+              type="number"
+              min="1"
+              step="0.01"
+              placeholder="Leave blank to hide price"
+            />
+            <p style={{ fontSize: "0.62rem", color: "rgba(245,240,232,0.35)", marginTop: "0.35rem" }}>
+              Only shown publicly when a price is entered.
+            </p>
           </div>
           <ImageUploader
             label="Image *"

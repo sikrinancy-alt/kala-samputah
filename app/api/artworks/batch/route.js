@@ -22,7 +22,7 @@ export async function GET(req) {
     if (!ids.length) return NextResponse.json({ artworks: [] });
 
     const artworks = await Artwork.find({ _id: { $in: ids } })
-      .select("title artist medium category year size color desc src featured images order")
+      .select("title artist medium category year size price color desc src featured images order")
       .lean();
 
     return NextResponse.json({ artworks });

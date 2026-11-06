@@ -111,6 +111,7 @@ function RoomVisualizerContent() {
   // ── Artworks Catalog State ──
   const [artworksList, setArtworksList] = useState(allWorks);
   const [artworkLoadError, setArtworkLoadError] = useState(false);
+  const [isArtworkCatalogLoading, setIsArtworkCatalogLoading] = useState(true);
   const [selectedArtwork, setSelectedArtwork] = useState(() => {
     if (!targetId) return allWorks[0] || null;
     const match = allWorks.find(
@@ -139,6 +140,7 @@ function RoomVisualizerContent() {
   // Fetch full live catalog from /api/artworks
   useEffect(() => {
     let active = true;
+    setIsArtworkCatalogLoading(true);
     const fetchArt = async () => {
       try {
         const res = await fetch("/api/artworks?limit=60");
@@ -170,16 +172,16 @@ function RoomVisualizerContent() {
             return combined;
           });
 
-          if (targetId) {
-            const found = mapped.find(
-              (m) => m._id === targetId || m.id?.toString() === targetId
-            );
-            if (found) setSelectedArtwork(found);
-          }
+          const found = targetId
+            ? mapped.find((m) => m._id === targetId || m.id?.toString() === targetId)
+            : null;
+          setSelectedArtwork((current) => found || current || mapped[0] || null);
         }
       } catch (err) {
         console.error("[Visualizer] fetch artworks failed:", err);
         if (active) setArtworkLoadError(true);
+      } finally {
+        if (active) setIsArtworkCatalogLoading(false);
       }
     };
     fetchArt();
@@ -741,18 +743,23 @@ Please share pricing and commissioning timeline for this specification.`
           ) : (
             <div className="absolute z-20 max-w-sm mx-5 rounded-lg border border-white/20 bg-black/60 px-6 py-5 text-center backdrop-blur-sm">
               <p className="text-xs uppercase tracking-[0.2em] text-[#C9A96E]">
-                {artworkLoadError ? "Artwork catalogue unavailable" : "No artworks available"}
+                {artworkLoadError
+                  ? "Artwork catalogue unavailable"
+                  : isArtworkCatalogLoading
+                    ? "Loading artworks"
+                    : artworksList.length > 0
+                      ? "Select an artwork"
+                      : "No artworks available"}
               </p>
               <p className="mt-2 text-sm text-white/70">
                 {artworkLoadError
                   ? "The catalogue could not be loaded. Check the database connection and try again."
-                  : "Add an artwork in the admin panel to preview it in this room."}
+                  : isArtworkCatalogLoading
+                    ? "Loading the available artworks for this room."
+                    : artworksList.length > 0
+                      ? "Choose a painting from the Artwork menu above to preview it here."
+                      : "No artworks are available right now. Please check back soon."}
               </p>
-              {!artworkLoadError && (
-                <Link href="/admin/artworks" prefetch={false} className="mt-4 inline-flex rounded-full border border-[#C9A96E]/60 px-4 py-2 text-[0.65rem] uppercase tracking-widest text-[#E5CC9C]">
-                  Open Admin Artworks
-                </Link>
-              )}
             </div>
           )}
 

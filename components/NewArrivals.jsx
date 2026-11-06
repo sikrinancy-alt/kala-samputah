@@ -21,6 +21,7 @@ export default function NewArrivals() {
           artist:   a.artist   || "Nancy Sikri",
           medium:   a.medium   || "Mixed Media on Canvas",
           size:     a.dimensions || a.size || "",
+          price:    a.price,
           year:     a.year     || new Date().getFullYear(),
           color:    a.color    || "Neutral",
           category: a.category?.name || a.category || "Paintings",

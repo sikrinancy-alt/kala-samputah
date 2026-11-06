@@ -8,6 +8,7 @@ import Footer from "../../components/Footer";
 import { FaInstagram, FaArrowRight, FaPlay } from "react-icons/fa";
 import { getCachedArtworks } from "../../lib/artworksCache";
 import { primarySrc } from "../../lib/artworkViews";
+import { formatArtworkPrice } from "../../lib/formatArtworkPrice";
 
 const timeline = [
   { year: "2020", event: "Lockdown opened a door. Painted quietly at first — putting onto canvas the confusion she couldn't name." },
@@ -42,6 +43,7 @@ export default function ArtistsPage() {
           src:    primarySrc(a),
           title:  a.title,
           medium: a.medium || "Mixed Media on Canvas",
+          price:  a.price,
           year:   a.year   || new Date().getFullYear(),
         }));
         setFeaturedWorks(formatted);
@@ -475,6 +477,11 @@ export default function ArtistsPage() {
                   }}>
                     {work.medium} · {work.year}
                   </p>
+                  {formatArtworkPrice(work.price) && (
+                    <p style={{ fontSize: "0.85rem", color: "#F5F0E8", fontWeight: 600, marginTop: "0.35rem" }}>
+                      {formatArtworkPrice(work.price)}
+                    </p>
+                  )}
                 </div>
               </div>
             ))}

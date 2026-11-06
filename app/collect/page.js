@@ -11,6 +11,7 @@ import { FaSearchPlus, FaTimes, FaArrowRight, FaPalette } from "react-icons/fa";
 import { useArtModal } from "../../components/ArtModalContext";
 import { getCachedArtworks, hasArtworksFetchError } from "../../lib/artworksCache";
 import { angleViews, primarySrc } from "../../lib/artworkViews";
+import { formatArtworkPrice } from "../../lib/formatArtworkPrice";
 
 const categories = ["All", "Paintings", "Prints", "Photography"];
 const paletteColors = [
@@ -125,6 +126,7 @@ function CollectContent() {
           artist: a.artist || "Nancy Sikri",
           medium: a.medium || "Mixed Media on Canvas",
           size: a.dimensions || a.size || "",
+          price: a.price,
           year: a.year || new Date().getFullYear(),
           color: a.color || "Neutral",
           category: a.category?.name || a.category || "Paintings",
@@ -399,6 +401,7 @@ function CollectContent() {
             <div className="grid grid-cols-2 md:grid-cols-3 gap-x-5 gap-y-10 md:gap-x-8 md:gap-y-14">
               {visible.slice(0, displayCount).map((work) => {
                 const isHov = hovered === work.id;
+                const formattedPrice = formatArtworkPrice(work.price);
                 return (
                   <div
                     key={work.id}
@@ -476,7 +479,7 @@ function CollectContent() {
                         }}
                         className="px-3.5 py-1.5 rounded-full bg-brand-accent hover:bg-white text-brand-dark text-[0.65rem] tracking-widest uppercase font-sans font-semibold shadow transition-colors"
                       >
-                        Inquire for Quote
+                        {formattedPrice ? "Ask About This Artwork" : "Inquire for Quote"}
                       </button>
                     </div>
                   </div>
@@ -495,6 +498,11 @@ function CollectContent() {
                           {work.size}
                         </p>
                       )}
+                      {formattedPrice && (
+                        <p className="text-sm text-brand-dark font-sans font-semibold mt-1">
+                          {formattedPrice}
+                        </p>
+                      )}
                     </div>
 
                     <div className="mt-2.5">
@@ -506,7 +514,7 @@ function CollectContent() {
                         }}
                         className="text-[0.68rem] tracking-widest uppercase text-brand-accent hover:text-brand-dark border-b border-brand-accent/40 hover:border-brand-dark pb-0.5 font-sans font-medium transition-colors"
                       >
-                        Inquire for Quote →
+                        {formattedPrice ? "Ask About This Artwork →" : "Inquire for Quote →"}
                       </button>
                     </div>
                   </div>

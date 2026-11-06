@@ -8,6 +8,7 @@ const ArtworkSchema = new mongoose.Schema(
     category: { type: String, enum: ["Paintings", "Prints", "Photography"], required: true },
     year:     { type: Number, required: true },
     size:     { type: String },
+    price:    { type: Number, min: 1, default: null },
     color:    { type: String },
     desc:     { type: String },
     src:      { type: String, required: true },   // image path or URL

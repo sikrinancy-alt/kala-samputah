@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { FaTimes, FaWhatsapp, FaArrowRight, FaShieldAlt, FaAward, FaTruck, FaBrush, FaHome } from "react-icons/fa";
+import { formatArtworkPrice } from "../lib/formatArtworkPrice";
 
 const LensZoom = dynamic(() => import("./LensZoom"), {
   ssr: false,
@@ -12,6 +13,7 @@ export default function ArtworkDetailModal({ isOpen, onClose, artwork, onInquire
   if (!isOpen || !artwork) return null;
 
   const artworkId = artwork._id || artwork.id;
+  const formattedPrice = formatArtworkPrice(artwork.price);
 
   return (
     <div className="fixed inset-0 z-[90] flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md overflow-y-auto animate-fadeIn">
@@ -146,11 +148,22 @@ export default function ArtworkDetailModal({ isOpen, onClose, artwork, onInquire
                 <span className="text-[0.65rem] uppercase tracking-widest text-brand-accent font-sans font-semibold block mb-1">
                   Private Acquisition
                 </span>
-                <p className="font-display text-xl text-brand-dark mb-1">
-                  Inquire for Pricing & Details
-                </p>
+                {formattedPrice ? (
+                  <>
+                    <span className="text-[0.62rem] uppercase tracking-widest text-brand-muted font-sans block">
+                      Listed Price
+                    </span>
+                    <p className="font-display text-2xl text-brand-dark mb-1">{formattedPrice}</p>
+                  </>
+                ) : (
+                  <p className="font-display text-xl text-brand-dark mb-1">
+                    Inquire for Pricing & Details
+                  </p>
+                )}
                 <p className="text-xs text-brand-muted font-sans leading-relaxed mb-6">
-                  We place original works directly through private inquiry. No retail cart markups. Includes tailored framing options and shipping logistics.
+                  {formattedPrice
+                    ? "Inquire about availability, tailored framing options, and shipping logistics."
+                    : "We place original works directly through private inquiry. No retail cart markups. Includes tailored framing options and shipping logistics."}
                 </p>
               </div>
 
@@ -171,7 +184,7 @@ export default function ArtworkDetailModal({ isOpen, onClose, artwork, onInquire
                   }}
                   className="w-full py-3.5 px-6 bg-brand-dark hover:bg-brand-warm text-brand-cream rounded-lg text-xs tracking-widest uppercase font-sans font-medium transition-all shadow hover:shadow-md flex items-center justify-center gap-2"
                 >
-                  <span>Inquire for Quote</span>
+                  <span>{formattedPrice ? "Ask About This Artwork" : "Inquire for Quote"}</span>
                   <FaArrowRight className="text-[10px] text-brand-accent" />
                 </button>
 

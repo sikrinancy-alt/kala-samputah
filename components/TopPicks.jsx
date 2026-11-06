@@ -6,6 +6,7 @@ import { FaSearchPlus } from "react-icons/fa";
 import { useArtModal } from "./ArtModalContext";
 import { getCachedArtworks } from "../lib/artworksCache";
 import { primarySrc, angleViews } from "../lib/artworkViews";
+import { formatArtworkPrice } from "../lib/formatArtworkPrice";
 
 function getCardStyle(offset) {
   const abs = Math.abs(offset);
@@ -41,6 +42,7 @@ export default function TopPicks() {
           subtitle: a.story    || a.description || "Original studio piece",
           medium:   a.medium   || "Mixed Media on Canvas",
           size:     a.dimensions || a.size || "",
+          price:    a.price,
           year:     a.year     || new Date().getFullYear(),
           color:    a.color    || "Amber",
           src:      primarySrc(a),
@@ -98,6 +100,7 @@ export default function TopPicks() {
             const offset   = i - active;
             const style    = getCardStyle(offset);
             const isCenter = offset === 0;
+            const formattedPrice = formatArtworkPrice(pick.price);
             return (
               <div key={pick._id || i} onClick={() => handleCardClick(i, isCenter, pick)}
                 className="absolute cursor-pointer w-[170px] h-[240px] sm:w-[210px] sm:h-[290px] md:w-[260px] md:h-[360px]"
@@ -117,6 +120,11 @@ export default function TopPicks() {
                     <div className="absolute bottom-4 left-4 right-4 text-left">
                       <p style={{ fontWeight: 600, fontSize: "1.05rem", color: "#FFFFFF", lineHeight: 1.2, marginBottom: "0.2rem" }}>{pick.title}</p>
                       <p style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.75)", fontStyle: "italic", marginBottom: "0.6rem" }}>{pick.subtitle}</p>
+                      {formattedPrice && (
+                        <p style={{ fontSize: "0.85rem", color: "#F5F0E8", fontWeight: 600, marginBottom: "0.6rem" }}>
+                          {formattedPrice}
+                        </p>
+                      )}
                       <div className="flex items-center gap-2">
                         <button type="button" onClick={(e) => { e.stopPropagation(); openInquiry(pick); }}
                           className="px-2.5 py-1 bg-brand-accent hover:bg-white text-brand-dark text-[0.62rem] tracking-wider uppercase font-sans font-semibold rounded transition-colors">

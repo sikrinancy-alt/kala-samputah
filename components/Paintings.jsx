@@ -26,6 +26,7 @@ export default function Paintings() {
             artist:   a.artist   || "Nancy Sikri",
             medium:   a.medium   || "Mixed Media on Canvas",
             size:     a.dimensions || a.size || "",
+            price:    a.price,
             year:     a.year     || new Date().getFullYear(),
             color:    a.color    || "Amber",
             category: a.category?.name || a.category || "Paintings",

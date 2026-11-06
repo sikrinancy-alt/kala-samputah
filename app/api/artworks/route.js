@@ -20,7 +20,7 @@ export async function GET(req) {
     // light=1 → only fields catalogue cards need (smaller payload for public pages).
     // Without it, full documents are returned so the admin edit form stays complete.
     const projection = light
-      ? "title artist medium category year size color desc src featured images order"
+      ? "title artist medium category year size price color desc src featured images order"
       : "";
 
     const artworks = await Artwork.find(filter)
