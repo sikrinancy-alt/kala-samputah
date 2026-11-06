@@ -9,7 +9,7 @@ import Footer from "../../components/Footer";
 import { allWorks } from "../../components/data";
 import { FaSearchPlus, FaTimes, FaArrowRight, FaPalette } from "react-icons/fa";
 import { useArtModal } from "../../components/ArtModalContext";
-import { getCachedArtworks } from "../../lib/artworksCache";
+import { getCachedArtworks, hasArtworksFetchError } from "../../lib/artworksCache";
 import { angleViews, primarySrc } from "../../lib/artworkViews";
 
 const categories = ["All", "Paintings", "Prints", "Photography"];
@@ -98,6 +98,7 @@ function CollectContent() {
   const [hovered, setHovered] = useState(null);
   const [colorHovered, setColorHovered] = useState(null);
   const [works, setWorks] = useState(allWorks);
+  const [catalogLoadError, setCatalogLoadError] = useState(false);
   const [displayCount, setDisplayCount] = useState(12);
 
   // ── Wishlist state ──
@@ -115,6 +116,7 @@ function CollectContent() {
   useEffect(() => {
     let mounted = true;
     getCachedArtworks().then((artworks) => {
+      if (mounted) setCatalogLoadError(hasArtworksFetchError());
       if (artworks && artworks.length > 0 && mounted) {
         const formatted = artworks.map((a) => ({
           id: a._id,
@@ -532,18 +534,21 @@ function CollectContent() {
               <FaPalette className="text-xl text-brand-accent" />
             </div>
             <p className="font-display text-2xl md:text-3xl text-brand-dark mb-2">
-              No works in this selection
+              {catalogLoadError ? "Collection temporarily unavailable" : "No works in this selection"}
             </p>
             <p className="text-xs sm:text-sm text-brand-muted font-sans mb-6 leading-relaxed">
-              We couldn't find any studio artworks matching{" "}
-              {activeCategory !== "All" && <span className="font-semibold text-brand-dark">"{activeCategory}"</span>}
-              {activeCategory !== "All" && activeColor !== "All" && " and "}
-              {activeColor !== "All" && (
-                <span>
-                  palette <span className="font-semibold text-brand-dark">"{activeColor}"</span>
-                </span>
-              )}
-              . Try picking another palette or category.
+              {catalogLoadError
+                ? "We couldn't load the artwork catalogue. Please try again later."
+                : <>We couldn't find any studio artworks matching{" "}
+                    {activeCategory !== "All" && <span className="font-semibold text-brand-dark">"{activeCategory}"</span>}
+                    {activeCategory !== "All" && activeColor !== "All" && " and "}
+                    {activeColor !== "All" && (
+                      <span>
+                        palette <span className="font-semibold text-brand-dark">"{activeColor}"</span>
+                      </span>
+                    )}
+                    . Try picking another palette or category.
+                  </>}
             </p>
             <div className="flex flex-wrap gap-2 justify-center mb-6">
               {activeCategory !== "All" && (

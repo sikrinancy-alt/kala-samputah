@@ -2,6 +2,9 @@
 // NOTE: Artwork product data is served from MongoDB via /api/artworks
 // This file contains site-level static content only.
 
+// Kept as an empty compatibility export; MongoDB is the source of truth for artworks.
+export const allWorks = [];
+
 export const navLinks = ["Collect", "Artists", "The Edits", "Journal", "Info"];
 
 // Category labels for filters

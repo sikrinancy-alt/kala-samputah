@@ -12,6 +12,7 @@ import {
   SCALE_PRESETS,
   LIGHTING_MODES,
 } from "../../components/roomsData";
+import { primarySrc } from "../../lib/artworkViews";
 import {
   FaArrowLeft,
   FaWhatsapp,
@@ -109,15 +110,16 @@ function RoomVisualizerContent() {
 
   // ── Artworks Catalog State ──
   const [artworksList, setArtworksList] = useState(allWorks);
+  const [artworkLoadError, setArtworkLoadError] = useState(false);
   const [selectedArtwork, setSelectedArtwork] = useState(() => {
-    if (!targetId) return allWorks[0];
+    if (!targetId) return allWorks[0] || null;
     const match = allWorks.find(
       (w) =>
         w.id?.toString() === targetId ||
         w._id?.toString() === targetId ||
         (parseInt(targetId, 10) && w.id === parseInt(targetId, 10))
     );
-    return match || allWorks[0];
+    return match || allWorks[0] || null;
   });
 
   // Natural Aspect Ratio of the active painting (prevents any stretching/distortion)
@@ -140,40 +142,44 @@ function RoomVisualizerContent() {
     const fetchArt = async () => {
       try {
         const res = await fetch("/api/artworks?limit=60");
-        if (res.ok) {
-          const data = await res.json();
-          const items = Array.isArray(data.artworks) && data.artworks.length > 0 ? data.artworks : [];
-          if (active && items.length > 0) {
-            const mapped = items.map((art) => ({
-              id: art._id,
-              _id: art._id,
-              title: art.title,
-              artist: art.artist || "Nancy Sikri",
-              medium: art.medium || "Acrylic on Canvas",
-              size: art.dimensions || art.size || "Original Size",
-              year: art.year || 2024,
-              src: art.images?.[0] || art.image || art.src || "/art/placeholder.jpg",
-            }));
-            setArtworksList((prev) => {
-              const combined = [...mapped];
-              allWorks.forEach((sw) => {
-                if (!combined.some((c) => c.title.toLowerCase() === sw.title.toLowerCase())) {
-                  combined.push(sw);
-                }
-              });
-              return combined;
+        if (!res.ok) {
+          if (active) setArtworkLoadError(true);
+          return;
+        }
+        if (active) setArtworkLoadError(false);
+        const data = await res.json();
+        const items = Array.isArray(data.artworks) && data.artworks.length > 0 ? data.artworks : [];
+        if (active && items.length > 0) {
+          const mapped = items.map((art) => ({
+            id: art._id,
+            _id: art._id,
+            title: art.title,
+            artist: art.artist || "Nancy Sikri",
+            medium: art.medium || "Acrylic on Canvas",
+            size: art.dimensions || art.size || "Original Size",
+            year: art.year || 2024,
+            src: primarySrc(art) || art.image || "/art/placeholder.jpg",
+          }));
+          setArtworksList((prev) => {
+            const combined = [...mapped];
+            allWorks.forEach((sw) => {
+              if (!combined.some((c) => c.title.toLowerCase() === sw.title.toLowerCase())) {
+                combined.push(sw);
+              }
             });
+            return combined;
+          });
 
-            if (targetId) {
-              const found = mapped.find(
-                (m) => m._id === targetId || m.id?.toString() === targetId
-              );
-              if (found) setSelectedArtwork(found);
-            }
+          if (targetId) {
+            const found = mapped.find(
+              (m) => m._id === targetId || m.id?.toString() === targetId
+            );
+            if (found) setSelectedArtwork(found);
           }
         }
       } catch (err) {
         console.error("[Visualizer] fetch artworks failed:", err);
+        if (active) setArtworkLoadError(true);
       }
     };
     fetchArt();
@@ -649,24 +655,25 @@ Please share pricing and commissioning timeline for this specification.`
           />
 
           {/* ── THE PAINTING ON THE WALL ── */}
-          <div
-            onPointerDown={handlePointerDown}
-            onClick={(e) => e.stopPropagation()}
-            className={`absolute transition-transform duration-75 ease-out select-none ${
-              isDragging ? "cursor-grabbing ring-2 ring-[#C9A96E]/50" : "cursor-grab"
-            }`}
-            style={{
-              left: `${calcLeft}%`,
-              top: `${calcTop}%`,
-              transform: "translate(-50%, -50%)",
-              width: `${currentRenderScale}%`,
-              aspectRatio: artworkAspectRatio ? String(artworkAspectRatio) : undefined,
-              maxWidth: isMobile ? (isLandscapeMobile ? "32vw" : "80vw") : "540px",
-              minWidth: isMobile ? (isLandscapeMobile ? "55px" : "90px") : "140px",
-              touchAction: "none",
-              zIndex: 20,
-            }}
-          >
+          {selectedArtwork ? (
+            <div
+              onPointerDown={handlePointerDown}
+              onClick={(e) => e.stopPropagation()}
+              className={`absolute transition-transform duration-75 ease-out select-none ${
+                isDragging ? "cursor-grabbing ring-2 ring-[#C9A96E]/50" : "cursor-grab"
+              }`}
+              style={{
+                left: `${calcLeft}%`,
+                top: `${calcTop}%`,
+                transform: "translate(-50%, -50%)",
+                width: `${currentRenderScale}%`,
+                aspectRatio: artworkAspectRatio ? String(artworkAspectRatio) : undefined,
+                maxWidth: isMobile ? (isLandscapeMobile ? "32vw" : "80vw") : "540px",
+                minWidth: isMobile ? (isLandscapeMobile ? "55px" : "90px") : "140px",
+                touchAction: "none",
+                zIndex: 20,
+              }}
+            >
             {/* Outer Frame Wrapper */}
             <div
               className="relative overflow-hidden transition-all duration-300 w-full h-full flex items-center justify-center"
@@ -730,7 +737,24 @@ Please share pricing and commissioning timeline for this specification.`
                 )}
               </div>
             )}
-          </div>
+            </div>
+          ) : (
+            <div className="absolute z-20 max-w-sm mx-5 rounded-lg border border-white/20 bg-black/60 px-6 py-5 text-center backdrop-blur-sm">
+              <p className="text-xs uppercase tracking-[0.2em] text-[#C9A96E]">
+                {artworkLoadError ? "Artwork catalogue unavailable" : "No artworks available"}
+              </p>
+              <p className="mt-2 text-sm text-white/70">
+                {artworkLoadError
+                  ? "The catalogue could not be loaded. Check the database connection and try again."
+                  : "Add an artwork in the admin panel to preview it in this room."}
+              </p>
+              {!artworkLoadError && (
+                <Link href="/admin/artworks" prefetch={false} className="mt-4 inline-flex rounded-full border border-[#C9A96E]/60 px-4 py-2 text-[0.65rem] uppercase tracking-widest text-[#E5CC9C]">
+                  Open Admin Artworks
+                </Link>
+              )}
+            </div>
+          )}
 
           {/* Reposition Drag Hint (Hidden in Zen Mode AND during Snapshot capture) */}
           {!isZenMode && !isDownloading && (
@@ -1749,7 +1773,9 @@ Please share pricing and commissioning timeline for this specification.`
             </div>
 
             <div className="flex-1 overflow-y-auto space-y-2.5 pr-1">
-              {artworksList.map((art) => {
+              {artworksList.length === 0 ? (
+                <p className="py-8 text-center text-sm text-white/50">No artworks have been added yet.</p>
+              ) : artworksList.map((art) => {
                 const isSelected =
                   selectedArtwork?.id?.toString() === art.id?.toString() ||
                   selectedArtwork?._id === art._id ||

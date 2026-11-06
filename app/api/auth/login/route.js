@@ -47,12 +47,13 @@ export async function POST(req) {
       ],
     });
 
-    const envPassword = process.env.ADMIN_PASSWORD || "KalaSamputah@2026";
+    const envPassword = process.env.ADMIN_PASSWORD;
 
     if (!admin) {
       // Auto-create Nancy Sikri admin
       if (
         (normalizedEmail === PRIMARY_ADMIN_EMAIL || normalizedEmail === "admin@kalasamputah.com") &&
+        envPassword &&
         password === envPassword
       ) {
         admin = new Admin({
