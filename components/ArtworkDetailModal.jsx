@@ -35,7 +35,7 @@ export default function ArtworkDetailModal({ isOpen, onClose, artwork, onInquire
             <Link
               href={`/view-on-wall?id=${artworkId}`}
               onClick={onClose}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#1C1C1C] hover:bg-[#C9A96E] text-[#F5EFE6] hover:text-[#181410] text-[0.62rem] tracking-wider uppercase font-sans font-semibold transition-all shadow-sm"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#1C1C1C] hover:bg-[#C9A96E] text-[#F5EFE6] hover:text-[#181410] text-[0.62rem] tracking-wider uppercase font-sans font-normal transition-all shadow-sm"
               title="Open Full Screen Room Visualizer"
             >
               <FaHome className="text-[11px]" />

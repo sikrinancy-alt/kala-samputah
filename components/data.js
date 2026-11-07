@@ -10,13 +10,8 @@ export const navLinks = ["Collect", "Artists", "The Edits", "Journal", "Info"];
 // Category labels for filters
 export const categoryLabels = ["All", "Paintings", "Prints", "Photography"];
 
-// Hero slider — section imagery (not products)
-export const heroSlides = [
-  { src: "/hero/slide1.jpg", label: "Original Works"   },
-  { src: "/hero/slide2.jpg", label: "Abstract Series"  },
-  { src: "/hero/slide3.jpg", label: "Vivid Collection" },
-  { src: "/hero/slide4.jpg", label: "Raw Expressions"  },
-];
+// Admin-configured slides load from site content; do not seed missing image paths.
+export const heroSlides = [];
 
 // Category section covers — visual UI, not product listing
 export const categories = [

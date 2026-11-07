@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { FaSearchPlus } from "react-icons/fa";
 import { useArtModal } from "./ArtModalContext";
@@ -27,6 +27,8 @@ export default function TopPicks() {
   const [workList, setWorkList] = useState([]);
   const [loading,  setLoading]  = useState(true);
   const { openArtwork, openInquiry } = useArtModal();
+  const touchStart = useRef(null);
+  const suppressClick = useRef(false);
 
   useEffect(() => {
     getCachedArtworks().then((artworks) => {
@@ -63,6 +65,26 @@ export default function TopPicks() {
     else setActive(i);
   };
 
+  const handleTouchStart = (event) => {
+    const touch = event.touches[0];
+    touchStart.current = { x: touch.clientX, y: touch.clientY };
+    suppressClick.current = false;
+  };
+
+  const handleTouchEnd = (event) => {
+    if (!touchStart.current) return;
+
+    const touch = event.changedTouches[0];
+    const deltaX = touch.clientX - touchStart.current.x;
+    const deltaY = touch.clientY - touchStart.current.y;
+    touchStart.current = null;
+
+    if (Math.abs(deltaX) < 45 || Math.abs(deltaX) <= Math.abs(deltaY) * 1.2) return;
+
+    suppressClick.current = true;
+    setActive((current) => Math.max(0, Math.min(workList.length - 1, current + (deltaX < 0 ? 1 : -1))));
+  };
+
   if (!loading && workList.length === 0) return null;
 
   return (
@@ -84,7 +106,19 @@ export default function TopPicks() {
           ))}
         </div>
       ) : (
-        <div className="relative flex items-center justify-center h-[300px] sm:h-[360px] md:h-[420px]">
+        <div
+          className="relative flex items-center justify-center h-[300px] sm:h-[360px] md:h-[420px]"
+          style={{ touchAction: "pan-y" }}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          onTouchCancel={() => { touchStart.current = null; }}
+          onClickCapture={(event) => {
+            if (!suppressClick.current) return;
+            event.preventDefault();
+            event.stopPropagation();
+            suppressClick.current = false;
+          }}
+        >
           <button onClick={prev} disabled={active === 0} aria-label="Previous"
             className="absolute left-3 z-20 w-8 h-8 flex items-center justify-center rounded-full border border-brand-sand/60 bg-white/80 text-brand-dark disabled:opacity-30 transition-opacity md:hidden"
             style={{ top: "50%", transform: "translateY(-50%)" }}>

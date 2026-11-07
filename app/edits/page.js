@@ -308,29 +308,26 @@ export default function EditsPage() {
           </div>
 
           {/* Palette Swatch Filter Buttons */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 max-w-full">
+          <div className="flex w-full min-w-0 flex-wrap items-center justify-center gap-2 sm:w-auto sm:flex-1 sm:justify-end">
             {filterPalette.map((p) => {
               const active = selectedColor === p.name;
               return (
                 <button
                   key={p.name}
                   onClick={() => setSelectedColor(p.name)}
+                  type="button"
+                  title={p.name === "All" ? "All colors" : p.name}
+                  aria-label={p.name === "All" ? "Show all colors" : `Filter by ${p.name}`}
+                  aria-pressed={active}
                   style={{
-                    backgroundColor: p.bg,
-                    color: p.text,
+                    background: `radial-gradient(ellipse 54% 38% at 30% 23%, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.48) 34%, transparent 100%), radial-gradient(ellipse at 68% 78%, rgba(0,0,0,0.32), transparent 62%), ${p.bg}`,
                     border: `1px solid ${p.border}`,
                     boxShadow: active
-                      ? "0 0 0 2px #FDFAF5, 0 0 0 4px #1C1C1C, 0 4px 10px rgba(0,0,0,0.2)"
-                      : "0 1px 3px rgba(0,0,0,0.12)",
-                    transform: active ? "scale(1.06)" : "scale(1)",
+                      ? "0 0 0 2px #FDFAF5, 0 0 0 4px #1C1C1C, 0 3px 7px rgba(0,0,0,0.22)"
+                      : "0 2px 5px rgba(0,0,0,0.18), inset 0 1px 1px rgba(255,255,255,0.35)",
                   }}
-                  className="px-3.5 py-1.5 rounded-full text-xs font-sans tracking-wide transition-all flex items-center gap-1.5 flex-shrink-0 cursor-pointer font-medium hover:opacity-95"
-                >
-                  {active && (
-                    <span className="text-[10px] font-bold">✓</span>
-                  )}
-                  <span>{p.name}</span>
-                </button>
+                  className="h-7 w-7 shrink-0 cursor-pointer rounded-full transition-transform hover:scale-110 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-dark"
+                />
               );
             })}
           </div>
