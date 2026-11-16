@@ -129,7 +129,7 @@ export default function AboutArtist() {
             >
               <p>{data.bio1}</p>
               <p>{data.bio2}</p>
-              <p className="italic text-brand-warm">
+              <p className="italic text-[#5C452D] font-medium">
                 "{data.quote}"
               </p>
             </div>

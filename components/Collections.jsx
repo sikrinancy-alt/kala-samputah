@@ -61,7 +61,7 @@ export default function Collections() {
                 {src ? (
                   <Image
                     src={src}
-                    alt={label}
+                    alt=""
                     fill
                     loading="lazy"
                     sizes="(max-width: 768px) 75vw, 33vw"

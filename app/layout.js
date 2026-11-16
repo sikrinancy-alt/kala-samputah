@@ -26,6 +26,9 @@ export default function RootLayout({ children }) {
         {/* Preconnect to critical assets CDN (no-cors for standard img tags) */}
         <link rel="preconnect" href="https://res.cloudinary.com" />
         <link rel="dns-prefetch" href="https://res.cloudinary.com" />
+        {/* Preload critical above-the-fold fonts */}
+        <link rel="preload" href="/fonts/BeausiteFit-Regular.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href="/fonts/SF-Pro-Display-Regular.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
       </head>
       <body suppressHydrationWarning>
         <ClientWrapper>{children}</ClientWrapper>

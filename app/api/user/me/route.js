@@ -5,14 +5,14 @@ import User                  from "../../../../models/User";
 
 export async function GET() {
   const session = getUserSession();
-  if (!session) return NextResponse.json({ error: "Not logged in" }, { status: 401 });
+  if (!session) return NextResponse.json({ user: null }, { status: 200 });
 
   try {
     await connectDB();
     const user = await User.findById(session.id).select("-password").lean();
-    if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
+    if (!user) return NextResponse.json({ user: null }, { status: 200 });
     return NextResponse.json({ user });
   } catch {
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+    return NextResponse.json({ user: null }, { status: 200 });
   }
 }

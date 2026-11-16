@@ -8,6 +8,17 @@ import { heroSlides } from "./data";
 import { getCachedArtworks } from "../lib/artworksCache";
 import { primarySrc, optimizeImageUrl } from "../lib/artworkViews";
 
+const cloudinaryHeroLoader = ({ src, width, quality }) => {
+  if (!src || typeof src !== "string" || !src.includes("res.cloudinary.com")) return src;
+  const q = quality || "auto";
+  const w = Math.min(width || 1600, 1920);
+  const match = src.match(/(https:\/\/res\.cloudinary\.com\/[^/]+\/image\/upload\/)(.*?)(\/(?:v\d+\/)?kala-samputah\/.*)/);
+  if (match) {
+    return `${match[1]}f_auto,q_${q},w_${w}${match[3]}`;
+  }
+  return src.replace("/image/upload/", `/image/upload/f_auto,q_${q},w_${w}/`);
+};
+
 export default function HeroSlider() {
   const { content, loaded: contentLoaded } = useSiteContent();
   const [slides, setSlides] = useState(heroSlides);
@@ -108,10 +119,11 @@ export default function HeroSlider() {
           }`}
         >
           <Image
+            loader={cloudinaryHeroLoader}
             src={slide.src}
             alt={slide.label}
             fill
-            sizes="100vw"
+            sizes="(max-width: 768px) 100vw, 1600px"
             className={`object-cover ${i === currentSlide ? "ken-burns" : ""}`}
             priority={i === 0}
             fetchPriority={i === 0 ? "high" : "auto"}

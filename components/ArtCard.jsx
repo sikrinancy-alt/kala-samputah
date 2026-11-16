@@ -74,7 +74,7 @@ export default function ArtCard(props) {
           <button
             type="button"
             onClick={handleInquireClick}
-            className="mt-3 text-brand-accent hover:text-brand-dark transition-colors text-[0.68rem] tracking-widest uppercase border-b border-brand-accent/40 hover:border-brand-dark pb-0.5 font-medium"
+            className="mt-3 text-[#78551E] hover:text-brand-dark transition-colors text-[0.68rem] tracking-widest uppercase border-b border-[#78551E]/40 hover:border-brand-dark pb-0.5 font-medium"
             style={{ fontFamily: '"SF Pro Display", "SF Pro", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif' }}
           >
             {formattedPrice ? "Ask About This Artwork →" : "Inquire for Quote →"}

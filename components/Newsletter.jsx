@@ -100,7 +100,7 @@ export default function Newsletter() {
                 fontFamily: '"SF Pro Display", "SF Pro", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif',
                 fontStyle: "italic",
                 fontSize: "1rem",
-                color: "rgba(245,240,232,0.35)",
+                color: "rgba(245,240,232,0.75)",
                 marginTop: "1.2rem",
                 lineHeight: 1.7,
                 maxWidth: "36ch",
@@ -149,10 +149,10 @@ export default function Newsletter() {
                   htmlFor="newsletter-email"
                   style={{
                     fontFamily: '"SF Pro Display", "SF Pro", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif',
-                    fontSize: "0.6rem",
-                    letterSpacing: "0.3em",
+                    fontSize: "0.68rem",
+                    letterSpacing: "0.25em",
                     textTransform: "uppercase",
-                    color: "rgba(245,240,232,0.3)",
+                    color: "rgba(245,240,232,0.85)",
                     display: "block",
                     marginBottom: "0.8rem",
                   }}
@@ -221,7 +221,7 @@ export default function Newsletter() {
                     fontFamily: '"SF Pro Display", "SF Pro", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif',
                     fontStyle: "italic",
                     fontSize: "0.78rem",
-                    color: "rgba(245,240,232,0.2)",
+                    color: "rgba(245,240,232,0.75)",
                     marginTop: "1rem",
                   }}
                 >

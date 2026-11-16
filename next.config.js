@@ -29,8 +29,10 @@ const nextConfig = {
           { key: "X-Content-Type-Options", value: "nosniff" },
           // Only send referrer on same origin
           { key: "Referrer-Policy",        value: "strict-origin-when-cross-origin" },
-          // Force HTTPS for 1 year (applied properly once deployed to HTTPS)
-          { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" },
+          // Force HTTPS for 1 year with preload
+          { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains; preload" },
+          // Origin isolation
+          { key: "Cross-Origin-Opener-Policy", value: "same-origin-allow-popups" },
           // Block XSS in older browsers
           { key: "X-XSS-Protection",       value: "1; mode=block" },
           // Restrict powerful browser features we don't need

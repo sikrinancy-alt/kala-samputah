@@ -58,7 +58,7 @@ export default function Footer() {
                   fontFamily: '"SF Pro Display", "SF Pro", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif',
                   fontStyle: "italic",
                   fontSize: "0.95rem",
-                  color: "#8B7355",
+                  color: "#C9A96E",
                   letterSpacing: "0.02em",
                 }}
               >
@@ -71,7 +71,7 @@ export default function Footer() {
                 fontFamily: '"SF Pro Display", "SF Pro", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif',
                 fontSize: "1rem",
                 lineHeight: 1.8,
-                color: "rgba(232,221,208,0.45)",
+                color: "rgba(232,221,208,0.8)",
                 maxWidth: "24ch",
               }}
             >
@@ -81,17 +81,18 @@ export default function Footer() {
             {/* Social */}
             <div className="flex gap-4 pt-2">
               {[
-                { Icon: FaWhatsapp,   href: `https://wa.me/${whatsapp}?text=Hello%20Nancy%20%2F%20Kala%20Samputah%2C%20I%20am%20interested%20in%20your%20artworks.` },
-                { Icon: FaInstagram,  href: "https://www.instagram.com/kala_samputah" },
-                { Icon: FaFacebookF,  href: "https://www.facebook.com/kalasamputah" },
-                { Icon: FaPinterestP, href: "https://www.pinterest.com/kalasamputah" },
-              ].map(({ Icon, href }, i) => (
+                { label: "Chat on WhatsApp", Icon: FaWhatsapp,   href: `https://wa.me/${whatsapp}?text=Hello%20Nancy%20%2F%20Kala%20Samputah%2C%20I%20am%20interested%20in%20your%20artworks.` },
+                { label: "Follow on Instagram", Icon: FaInstagram,  href: "https://www.instagram.com/kala_samputah" },
+                { label: "Follow on Facebook", Icon: FaFacebookF,  href: "https://www.facebook.com/kalasamputah" },
+                { label: "View on Pinterest", Icon: FaPinterestP, href: "https://www.pinterest.com/kalasamputah" },
+              ].map(({ label, Icon, href }, i) => (
                 <a
                   key={i}
                   href={href}
+                  aria-label={label}
                   target={href !== "#" ? "_blank" : undefined}
                   rel="noopener noreferrer"
-                  className="text-brand-sand/30 hover:text-brand-accent transition-colors duration-300"
+                  className="text-brand-sand/75 hover:text-brand-accent transition-colors duration-300"
                 >
                   <Icon className="text-base" />
                 </a>
@@ -106,8 +107,8 @@ export default function Footer() {
               style={{
                 fontFamily: '"SF Pro Display", "SF Pro", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif',
                 fontStyle: "italic",
-                fontSize: "0.8rem",
-                color: "#8B7355",
+                fontSize: "0.85rem",
+                color: "#C9A96E",
                 letterSpacing: "0.08em",
               }}
             >
@@ -117,7 +118,7 @@ export default function Footer() {
               <Link
                 key={label}
                 href={href}
-                className="block text-brand-sand/30 hover:text-brand-accent transition-colors duration-300"
+                className="block text-brand-sand/75 hover:text-brand-accent transition-colors duration-300"
                 style={{
                   fontFamily: '"SF Pro Display", "SF Pro", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif',
                   fontSize: "1.05rem",
@@ -136,8 +137,8 @@ export default function Footer() {
               style={{
                 fontFamily: '"SF Pro Display", "SF Pro", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif',
                 fontStyle: "italic",
-                fontSize: "0.8rem",
-                color: "#8B7355",
+                fontSize: "0.85rem",
+                color: "#C9A96E",
                 letterSpacing: "0.08em",
               }}
             >
@@ -150,7 +151,7 @@ export default function Footer() {
                   fontFamily: '"SF Pro Display", "SF Pro", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif',
                   fontSize: "1.35rem",
                   fontWeight: 300,
-                  color: "rgba(245,240,232,0.75)",
+                  color: "rgba(245,240,232,0.9)",
                   lineHeight: 1.35,
                   letterSpacing: "0.01em",
                 }}
@@ -174,7 +175,7 @@ export default function Footer() {
 
             <a
               href={`mailto:${email}`}
-              className="inline-block text-brand-sand/40 hover:text-brand-accent border-b border-brand-accent/20 hover:border-brand-accent pb-0.5 transition-all duration-300"
+              className="inline-block text-brand-sand/80 hover:text-brand-accent border-b border-brand-accent/40 hover:border-brand-accent pb-0.5 transition-all duration-300"
               style={{
                 fontFamily: '"SF Pro Display", "SF Pro", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif',
                 fontSize: "0.85rem",
@@ -195,7 +196,7 @@ export default function Footer() {
       />
 
       {/* ── Bottom bar ── */}
-      <div className="max-w-7xl mx-auto px-6 md:px-16 py-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-brand-sand/25">
+      <div className="max-w-7xl mx-auto px-6 md:px-16 py-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-brand-sand/80">
         <p
           style={{
             fontFamily: '"SF Pro Display", "SF Pro", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif',
@@ -210,7 +211,7 @@ export default function Footer() {
           style={{
             fontFamily: '"SF Pro Display", "SF Pro", "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif',
             fontSize: "0.82rem",
-            color: "rgba(139,115,85,0.45)",
+            color: "rgba(201,169,110,0.85)",
             letterSpacing: "0.1em",
           }}
         >
