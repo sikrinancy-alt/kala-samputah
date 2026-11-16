@@ -61,11 +61,23 @@ export default function ArtCard(props) {
           >
             {title}
           </p>
-          <p className="section-title text-[0.65rem]">
-            {medium} {size ? `· ${size}` : ""}
+          <p
+            className="text-[0.73rem] text-[#63574D] font-normal leading-snug mt-1 line-clamp-2"
+            style={{
+              fontFamily: '"SF Pro Display", "SF Pro", -apple-system, BlinkMacSystemFont, sans-serif',
+              letterSpacing: "0.01em",
+            }}
+          >
+            <span>{medium}</span>
+            {size && (
+              <>
+                <span className="mx-1.5 text-neutral-400 font-light">·</span>
+                <span className="text-[#8B7355] font-medium whitespace-nowrap">{size}</span>
+              </>
+            )}
           </p>
           {formattedPrice && (
-            <p className="mt-1 text-sm font-semibold text-brand-dark">{formattedPrice}</p>
+            <p className="mt-1.5 text-sm font-semibold text-brand-dark">{formattedPrice}</p>
           )}
         </div>
 

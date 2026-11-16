@@ -490,11 +490,12 @@ function CollectContent() {
                       <p className="font-display font-medium text-sm md:text-base text-brand-dark group-hover:text-brand-accent transition-colors line-clamp-1 uppercase tracking-wide">
                         {work.title}
                       </p>
-                      <p className="text-xs text-[#8B7E72] font-sans mt-0.5 uppercase tracking-wider">
-                        {work.medium} · {work.year}
+                      <p className="text-[0.73rem] text-[#63574D] font-sans mt-1 line-clamp-1">
+                        <span>{work.medium}</span>
+                        {work.year && <span className="text-[#8B7E72]"> · {work.year}</span>}
                       </p>
                       {work.size && (
-                        <p className="text-[0.7rem] text-brand-warm font-sans mt-0.5">
+                        <p className="text-[0.72rem] text-[#8B7355] font-sans mt-0.5 font-medium whitespace-nowrap">
                           {work.size}
                         </p>
                       )}
@@ -512,7 +513,7 @@ function CollectContent() {
                           e.stopPropagation();
                           openInquiry(work);
                         }}
-                        className="text-[0.68rem] tracking-widest uppercase text-brand-accent hover:text-brand-dark border-b border-brand-accent/40 hover:border-brand-dark pb-0.5 font-sans font-medium transition-colors"
+                        className="text-[0.68rem] tracking-widest uppercase text-[#78551E] hover:text-brand-dark border-b border-[#78551E]/40 hover:border-brand-dark pb-0.5 font-sans font-medium transition-colors"
                       >
                         {formattedPrice ? "Ask About This Artwork →" : "Inquire for Quote →"}
                       </button>
