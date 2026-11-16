@@ -87,7 +87,7 @@ export default function Collections() {
                       style={{ fontFamily: '"SF Pro Display", sans-serif', fontWeight: 300, fontSize: "0.85rem" }}>
                       {label}
                     </p>
-                    <div className="w-8 h-[1px] bg-white/60 group-hover:w-16 transition-all duration-500" />
+                    <div className="w-8 h-[1px] bg-white/60 group-hover:scale-x-150 origin-left transition-transform duration-500" />
                   </div>
                 </div>
               </Link>

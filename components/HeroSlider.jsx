@@ -6,7 +6,7 @@ import { FaChevronLeft, FaChevronRight, FaPlay, FaPause } from "react-icons/fa";
 import { useSiteContent } from "./SiteContentContext";
 import { heroSlides } from "./data";
 import { getCachedArtworks } from "../lib/artworksCache";
-import { primarySrc } from "../lib/artworkViews";
+import { primarySrc, optimizeImageUrl } from "../lib/artworkViews";
 
 export default function HeroSlider() {
   const { content, loaded: contentLoaded } = useSiteContent();
@@ -20,15 +20,21 @@ export default function HeroSlider() {
 
     // Admin-configured hero slides take priority
     const configuredSlides = Array.isArray(content?.hero?.slides)
-      ? content.hero.slides.filter(
-          (slide) => typeof slide?.src === "string" && slide.src.trim()
-        )
+      ? content.hero.slides
+          .filter((slide) => typeof slide?.src === "string" && slide.src.trim())
+          .map((slide) => ({
+            ...slide,
+            src: optimizeImageUrl(slide.src, 1600),
+          }))
       : [];
 
     if (configuredSlides.length) {
-      setSlides(configuredSlides);
-      setCurrentSlide(0);
-      setLoadedSrc(null);
+      setSlides((prev) => {
+        const isSame =
+          prev.length === configuredSlides.length &&
+          prev.every((p, idx) => p.src === configuredSlides[idx]?.src);
+        return isSame ? prev : configuredSlides;
+      });
       return;
     }
 
@@ -40,17 +46,22 @@ export default function HeroSlider() {
       const candidates = featured?.length ? featured : artworks || [];
       const formatted = candidates
         .map((artwork) => ({
-          src: primarySrc(artwork),
+          src: optimizeImageUrl(primarySrc(artwork), 1600),
           label: artwork.title || "Original Work",
         }))
         .filter((slide) => slide.src)
         .slice(0, 4);
 
-      setSlides(formatted);
-      setCurrentSlide(0);
-      setLoadedSrc(null);
+      if (formatted.length) {
+        setSlides((prev) => {
+          const isSame =
+            prev.length === formatted.length &&
+            prev.every((p, idx) => p.src === formatted[idx]?.src);
+          return isSame ? prev : formatted;
+        });
+      }
     }).catch(() => {
-      if (!cancelled) setSlides([]);
+      if (!cancelled) setSlides(heroSlides);
     });
 
     return () => {
@@ -160,15 +171,16 @@ export default function HeroSlider() {
             {isPlaying ? <FaPause className="text-[10px]" /> : <FaPlay className="text-[10px]" />}
           </button>
 
-          {/* Dot indicators */}
+          {/* Dot indicators (GPU-composited transform/opacity) */}
           <div className="absolute bottom-10 right-8 md:right-16 z-10 flex gap-2 items-center">
             {slides.map((_, i) => (
               <button
                 key={i}
                 onClick={() => setCurrentSlide(i)}
-                className={`transition-all duration-300 ${
-                  i === currentSlide ? "w-6 h-[2px] bg-white" : "w-2 h-[2px] bg-white/40"
+                className={`h-[2px] w-6 transition-[transform,opacity] duration-300 origin-left ${
+                  i === currentSlide ? "scale-x-100 opacity-100 bg-white" : "scale-x-[0.35] opacity-40 bg-white"
                 }`}
+                style={{ willChange: "transform" }}
                 aria-label={`Go to slide ${i + 1}`}
               />
             ))}

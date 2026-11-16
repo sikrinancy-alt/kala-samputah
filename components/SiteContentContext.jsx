@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { heroSlides } from "./data";
+import { optimizeImageUrl } from "../lib/artworkViews";
 
 const DEFAULT_CONTENT = {
   hero: {
@@ -51,7 +52,7 @@ const SiteContentContext = createContext({
 const CONTENT_KEY = "ks_cached_content";
 
 function mergeContent(prev, raw) {
-  return {
+  const merged = {
     ...prev,
     ...raw,
     contact: {
@@ -59,6 +60,16 @@ function mergeContent(prev, raw) {
       studioEmail: raw.announcement?.studioEmail || raw.contact?.studioEmail || prev.contact.studioEmail,
     },
   };
+  if (Array.isArray(raw.hero?.slides) && raw.hero.slides.length > 0) {
+    merged.hero = {
+      ...merged.hero,
+      slides: raw.hero.slides.map((s) => ({
+        ...s,
+        src: optimizeImageUrl(s.src, 1600),
+      })),
+    };
+  }
+  return merged;
 }
 
 function readCachedContent() {

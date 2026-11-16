@@ -23,8 +23,8 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${dmSans.variable} ${jost.variable}`} suppressHydrationWarning>
       <head>
-        {/* Preconnect to critical assets CDN */}
-        <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
+        {/* Preconnect to critical assets CDN (no-cors for standard img tags) */}
+        <link rel="preconnect" href="https://res.cloudinary.com" />
         <link rel="dns-prefetch" href="https://res.cloudinary.com" />
       </head>
       <body suppressHydrationWarning>
