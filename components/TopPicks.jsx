@@ -141,7 +141,13 @@ export default function TopPicks() {
                 style={{ transition: "transform 0.5s cubic-bezier(0.34,1.2,0.64,1), opacity 0.4s ease", ...style }}>
                 <div className="relative w-full h-full overflow-hidden group"
                   style={{ borderRadius: "16px", boxShadow: isCenter ? "0 24px 60px rgba(28,28,28,0.28)" : "0 8px 24px rgba(28,28,28,0.14)" }}>
-                  <Image src={pick.src} alt={pick.title} fill className="object-cover" />
+                  <Image
+                    src={pick.src}
+                    alt={pick.title}
+                    fill
+                    sizes="(max-width: 768px) 85vw, 420px"
+                    className="object-cover"
+                  />
                   <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(28,28,28,0.85) 0%, rgba(28,28,28,0.2) 50%, transparent 100%)" }} />
                   {isCenter && (
                     <div className="absolute top-4 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full flex items-center gap-1.5 shadow"

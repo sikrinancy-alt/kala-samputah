@@ -1,5 +1,18 @@
 import "./globals.css";
 import { ClientWrapper } from "../components/ClientWrapper";
+import { DM_Sans, Jost } from "next/font/google";
+
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  variable: "--font-dm-sans",
+  display: "swap",
+});
+
+const jost = Jost({
+  subsets: ["latin"],
+  variable: "--font-jost",
+  display: "swap",
+});
 
 export const metadata = {
   title: "Kala Samputah | Nancy Sikri",
@@ -8,16 +21,11 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className={`${dmSans.variable} ${jost.variable}`} suppressHydrationWarning>
       <head>
-        {/* Non-blocking Google fonts (DM Sans/Jost) */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        {/* Load fonts asynchronously — media=print trick replaced with direct stylesheet load */}
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=Jost:wght@300;400;500;600;700&display=swap"
-        />
+        {/* Preconnect to critical assets CDN */}
+        <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://res.cloudinary.com" />
       </head>
       <body suppressHydrationWarning>
         <ClientWrapper>{children}</ClientWrapper>

@@ -10,8 +10,17 @@ export const navLinks = ["Collect", "Artists", "The Edits", "Journal", "Info"];
 // Category labels for filters
 export const categoryLabels = ["All", "Paintings", "Prints", "Photography"];
 
-// Admin-configured slides load from site content; do not seed missing image paths.
-export const heroSlides = [];
+// Default hero slides for instant SSR & fast LCP (customizable in admin content)
+export const heroSlides = [
+  {
+    src: "https://res.cloudinary.com/gjiimeef/image/upload/f_auto,q_auto,w_1600/v1793984194/kala-samputah/artworks/iybaulzgtsotfxn3f2lp.jpg",
+    label: "Studio in Color",
+  },
+  {
+    src: "https://res.cloudinary.com/gjiimeef/image/upload/f_auto,q_auto,w_1600/v1793984203/kala-samputah/artworks/ubsjfyozjiqm48w7ir8m.jpg",
+    label: "Artist at Work",
+  },
+];
 
 // Category section covers — visual UI, not product listing
 export const categories = [

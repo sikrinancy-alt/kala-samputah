@@ -40,8 +40,7 @@
 /* ── SF Pro Display — Body & UI Font ── */
 @font-face {
   font-family: 'SF Pro Display';
-  src: url('/fonts/SF-Pro-Display-Light.woff2') format('woff2'),
-       url('/fonts/SF-Pro-Display-Light.otf') format('opentype');
+  src: url('/fonts/SF-Pro-Display-Light.woff2') format('woff2');
   font-weight: 300;
   font-style: normal;
   font-display: swap;
@@ -49,8 +48,7 @@
 
 @font-face {
   font-family: 'SF Pro Display';
-  src: url('/fonts/SF-Pro-Display-Regular.woff2') format('woff2'),
-       url('/fonts/SF-Pro-Display-Regular.otf') format('opentype');
+  src: url('/fonts/SF-Pro-Display-Regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -58,8 +56,7 @@
 
 @font-face {
   font-family: 'SF Pro Display';
-  src: url('/fonts/SF-Pro-Display-Medium.woff2') format('woff2'),
-       url('/fonts/SF-Pro-Display-Medium.otf') format('opentype');
+  src: url('/fonts/SF-Pro-Display-Medium.woff2') format('woff2');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -67,8 +64,7 @@
 
 @font-face {
   font-family: 'SF Pro Display';
-  src: url('/fonts/SF-Pro-Display-Semibold.woff2') format('woff2'),
-       url('/fonts/SF-Pro-Display-Semibold.otf') format('opentype');
+  src: url('/fonts/SF-Pro-Display-Semibold.woff2') format('woff2');
   font-weight: 600;
   font-style: normal;
   font-display: swap;
@@ -76,19 +72,8 @@
 
 @font-face {
   font-family: 'SF Pro Display';
-  src: url('/fonts/SF-Pro-Display-Bold.woff2') format('woff2'),
-       url('/fonts/SF-Pro-Display-Bold.otf') format('opentype');
+  src: url('/fonts/SF-Pro-Display-Bold.woff2') format('woff2');
   font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-/* ── SF Pro ── */
-@font-face {
-  font-family: 'SF Pro';
-  src: url('/fonts/SF-Pro.woff2') format('woff2'),
-       url('/fonts/SF-Pro.ttf') format('truetype');
-  font-weight: 100 900;
   font-style: normal;
   font-display: swap;
 }
@@ -96,8 +81,7 @@
 /* ── SF Pro Text ── */
 @font-face {
   font-family: 'SF Pro Text';
-  src: url('/fonts/SF-Pro-Text-Regular.woff2') format('woff2'),
-       url('/fonts/SF-Pro-Text-Regular.otf') format('opentype');
+  src: url('/fonts/SF-Pro-Text-Regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -105,8 +89,7 @@
 
 @font-face {
   font-family: 'SF Pro Text';
-  src: url('/fonts/SF-Pro-Text-Medium.woff2') format('woff2'),
-       url('/fonts/SF-Pro-Text-Medium.otf') format('opentype');
+  src: url('/fonts/SF-Pro-Text-Medium.woff2') format('woff2');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -243,10 +226,14 @@ p, span, a, li, input, textarea, button, select, label {
 
 /* ── Hero Ken-Burns ── */
 @keyframes kenBurns {
-  0%   { transform: scale(1);    }
-  100% { transform: scale(1.06); }
+  0%   { transform: scale(1) translateZ(0); }
+  100% { transform: scale(1.05) translateZ(0); }
 }
-.ken-burns { animation: kenBurns 8s ease-in-out alternate infinite; }
+.ken-burns {
+  animation: kenBurns 10s ease-in-out alternate infinite;
+  will-change: transform;
+  transform: translateZ(0);
+}
 
 /* ── Hover lift card ── */
 .hover-lift {
@@ -269,11 +256,13 @@ p, span, a, li, input, textarea, button, select, label {
 
 /* ── About artist ink blob ── */
 @keyframes blobFloat {
-  0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
-  50%       { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+  0%, 100% { transform: scale(1) rotate(0deg) translateZ(0); }
+  50%      { transform: scale(1.05, 0.96) rotate(3deg) translateZ(0); }
 }
 .blob-shape {
   animation: blobFloat 8s ease-in-out infinite;
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 /* ── Scribble underline ── */
@@ -373,32 +362,22 @@ p, span, a, li, input, textarea, button, select, label {
 ::-webkit-scrollbar-track { background: #F5F0E8; }
 ::-webkit-scrollbar-thumb { background: #C9A96E; border-radius: 3px; }
 
-/* ── Skeleton shimmer ── */
-@keyframes shimmer {
-  0%   { background-position: -600px 0; }
-  100% { background-position:  600px 0; }
+/* ── Skeleton shimmer (GPU composited opacity pulse) ── */
+@keyframes shimmerPulse {
+  0%, 100% { opacity: 0.5; }
+  50%      { opacity: 0.9; }
 }
 .skeleton {
-  background: linear-gradient(
-    90deg,
-    #EEEBE5 0px,
-    #F5F2ED 200px,
-    #EEEBE5 400px
-  );
-  background-size: 600px 100%;
-  animation: shimmer 1.4s ease-in-out infinite;
+  background: #E8E5DF;
+  animation: shimmerPulse 1.6s ease-in-out infinite;
   border-radius: 3px;
+  will-change: opacity;
 }
 .skeleton-dark {
-  background: linear-gradient(
-    90deg,
-    #1e1c1a 0px,
-    #2a2825 200px,
-    #1e1c1a 400px
-  );
-  background-size: 600px 100%;
-  animation: shimmer 1.4s ease-in-out infinite;
+  background: #252220;
+  animation: shimmerPulse 1.6s ease-in-out infinite;
   border-radius: 3px;
+  will-change: opacity;
 }
 
 /* ── Page transition fade ── */
@@ -457,14 +436,8 @@ p, span, a, li, input, textarea, button, select, label {
 }
 
 /* Gold shimmer sweep for luxury action buttons */
-@keyframes luxSweep {
-  0%   { background-position: -180% 0; }
-  60%, 100% { background-position: 180% 0; }
-}
 .lux-btn-gold {
-  background-image: linear-gradient(110deg, #C9A96E 30%, #F3E2B8 48%, #C9A96E 66%);
-  background-size: 220% 100%;
-  animation: luxSweep 5.5s ease-in-out infinite;
+  background: linear-gradient(110deg, #C9A96E 30%, #F3E2B8 48%, #C9A96E 66%);
   transition: transform 0.2s ease, box-shadow 0.25s ease;
 }
 .lux-btn-gold:hover {
@@ -486,28 +459,14 @@ p, span, a, li, input, textarea, button, select, label {
 }
 
 
-/* ── Expecto shimmer — slow luxury ── */
-@keyframes expectoShimmer {
-  0%   { background-position: -900px 0; }
-  100% { background-position: 900px 0; }
-}
+/* ── Expecto link ── */
 .expecto-shimmer {
-  background: linear-gradient(
-    90deg,
-    #5a4428 0%,
-    #5a4428 38%,
-    #a07840 44%,
-    #C9A96E 48%,
-    #EDD9A3 50%,
-    #C9A96E 52%,
-    #a07840 56%,
-    #5a4428 62%,
-    #5a4428 100%
-  );
-  background-size: 900px 100%;
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: expectoShimmer 7s linear infinite;
+  color: #C9A96E;
   display: inline-block;
+  letter-spacing: 0.18em;
+  font-weight: 500;
+  transition: opacity 0.3s ease;
+}
+.expecto-shimmer:hover {
+  opacity: 0.8;
 }

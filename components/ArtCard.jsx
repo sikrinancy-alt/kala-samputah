@@ -4,11 +4,13 @@ import Image from "next/image";
 import { FaSearchPlus } from "react-icons/fa";
 import { useArtModal } from "./ArtModalContext";
 import { formatArtworkPrice } from "../lib/formatArtworkPrice";
+import { optimizeImageUrl } from "../lib/artworkViews";
 
 export default function ArtCard(props) {
   const { src, artist, title, medium, size, year, price } = props;
   const { openArtwork, openInquiry } = useArtModal();
   const formattedPrice = formatArtworkPrice(price);
+  const imageSrc = optimizeImageUrl(src);
 
   const handleCardClick = () => {
     openArtwork(props);
@@ -27,7 +29,7 @@ export default function ArtCard(props) {
       {/* Image Container */}
       <div className="art-card-img relative aspect-[3/4] overflow-hidden mb-0 bg-[#EFECE6] rounded-sm">
         <Image 
-          src={src} 
+          src={imageSrc || src} 
           alt={title} 
           fill 
           loading="lazy"

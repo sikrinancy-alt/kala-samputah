@@ -39,7 +39,7 @@ export async function GET(req) {
     );
   } catch (err) {
     console.error("[GET /api/artworks]", err);
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
+    return NextResponse.json({ error: "Server error", artworks: [] }, { status: 500 });
   }
 }
 

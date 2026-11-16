@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { FaInstagram, FaArrowRight, FaWhatsapp } from "react-icons/fa";
 import { useSiteContent } from "./SiteContentContext";
+import { optimizeImageUrl } from "../lib/artworkViews";
 
 const DEFAULT_ARTIST = {
   name: "Nancy Sikri",
@@ -96,7 +97,7 @@ export default function AboutArtist() {
             {/* Photo */}
             <div className="relative w-full max-w-[260px] md:max-w-[320px] aspect-[3/4] overflow-hidden z-10">
               <Image
-                src={data.photo || "/avatar.webp"}
+                src={optimizeImageUrl(data.photo) || "/avatar.webp"}
                 alt={`${data.name || "Nancy Sikri"} — Artist`}
                 fill
                 loading="lazy"

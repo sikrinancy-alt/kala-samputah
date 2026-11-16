@@ -4,12 +4,13 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { FaChevronLeft, FaChevronRight, FaPlay, FaPause } from "react-icons/fa";
 import { useSiteContent } from "./SiteContentContext";
+import { heroSlides } from "./data";
 import { getCachedArtworks } from "../lib/artworksCache";
 import { primarySrc } from "../lib/artworkViews";
 
 export default function HeroSlider() {
   const { content, loaded: contentLoaded } = useSiteContent();
-  const [slides, setSlides] = useState([]);
+  const [slides, setSlides] = useState(heroSlides);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPlaying, setIsPlaying]       = useState(true);
   const [loadedSrc, setLoadedSrc] = useState(null);
@@ -83,12 +84,10 @@ export default function HeroSlider() {
   }
 
   const activeSlide = slides[currentSlide] || slides[0];
-  const isActiveImageReady = Boolean(activeSlide && loadedSrc === activeSlide.src);
 
   return (
     <section
       className="relative w-full h-[62vh] md:h-[88vh] overflow-hidden bg-brand-dark"
-      aria-busy={!isActiveImageReady}
     >
       {slides.map((slide, i) => (
         <div
@@ -101,10 +100,12 @@ export default function HeroSlider() {
             src={slide.src}
             alt={slide.label}
             fill
+            sizes="100vw"
             className={`object-cover ${i === currentSlide ? "ken-burns" : ""}`}
             priority={i === 0}
+            fetchPriority={i === 0 ? "high" : "auto"}
             style={{
-              opacity: loadedSrc === slide.src ? 1 : 0,
+              opacity: i === 0 || loadedSrc === slide.src ? 1 : 0,
               transition: "opacity 700ms ease",
             }}
             onLoad={() => setLoadedSrc(slide.src)}
@@ -119,33 +120,18 @@ export default function HeroSlider() {
         </div>
       ))}
 
-      {!isActiveImageReady && (
-        <div className="absolute inset-0 z-10 flex items-end bg-brand-dark px-8 pb-12 md:px-16" aria-live="polite">
-          <div>
-            <p style={{ fontFamily: "'Jost', sans-serif", fontSize: "0.62rem", letterSpacing: "0.35em", textTransform: "uppercase", color: "rgba(201,169,110,0.55)", marginBottom: "1rem" }}>
-              Kala Samputah
-            </p>
-            <h2 style={{ fontFamily: "'DM Serif Display', serif", fontWeight: 300, fontSize: "clamp(2rem, 6vw, 5rem)", lineHeight: 1.05, color: "#F5F0E8", letterSpacing: "0.02em" }}>
-              Original Art by<br />Nancy Sikri
-            </h2>
-          </div>
-        </div>
-      )}
-
-      {isActiveImageReady && (
-        <>
-          {/* Bottom label */}
-          <div className="absolute bottom-10 left-8 md:left-16 z-10">
-            <p className="section-title mb-1" style={{ color: "rgba(255,255,255,0.65)" }}>
-              {activeSlide.label}
-            </p>
-            <h2
-              className="text-white text-3xl md:text-6xl"
-              style={{ fontFamily: 'BeausiteFit, "SF Pro Display", sans-serif', fontWeight: 300, lineHeight: 1.1 }}
-            >
-              Original Art by<br />Nancy Sikri
-            </h2>
-          </div>
+      {/* Bottom label */}
+      <div className="absolute bottom-10 left-8 md:left-16 z-10">
+        <p className="section-title mb-1" style={{ color: "rgba(255,255,255,0.65)" }}>
+          {activeSlide.label}
+        </p>
+        <h2
+          className="text-white text-3xl md:text-6xl"
+          style={{ fontFamily: 'BeausiteFit, "SF Pro Display", sans-serif', fontWeight: 300, lineHeight: 1.1 }}
+        >
+          Original Art by<br />Nancy Sikri
+        </h2>
+      </div>
 
           {/* Prev arrow */}
           <button
@@ -187,8 +173,6 @@ export default function HeroSlider() {
               />
             ))}
           </div>
-        </>
-      )}
     </section>
   );
 }

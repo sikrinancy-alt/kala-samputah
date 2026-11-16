@@ -4,6 +4,7 @@ import Image from "next/image";
 import { FaArrowRight, FaShareAlt, FaSearchPlus } from "react-icons/fa";
 import { useArtModal } from "./ArtModalContext";
 import { useSiteContent } from "./SiteContentContext";
+import { optimizeImageUrl } from "../lib/artworkViews";
 
 const DEFAULT_STORY = {
   src: "/avatar.webp",
@@ -56,7 +57,7 @@ export default function StoryOfTheDay() {
           }}
         >
           <Image
-            src={currentStory.src}
+            src={optimizeImageUrl(currentStory.src) || currentStory.src}
             alt={currentStory.title}
             fill
             loading="lazy"
